@@ -1,0 +1,4 @@
+civicmind-ai safety protocol: Always wear PPE. Report hazards immediately.
+1. Check for gas.
+2. Ensure ventilation.
+3. Use harness in confined spaces.

@@ -1,0 +1,39 @@
+# Backend - AI/ML Libraries
+transformers
+torch
+torchvision
+torchaudio
+sentence-transformers
+openai-whisper
+langchain
+langchain-community
+chromadb
+faiss-cpu
+
+# Backend - Web Framework
+fastapi
+uvicorn
+python-multipart
+pydantic
+python-dotenv
+
+# Backend - Image/Audio Processing
+Pillow
+opencv-python
+pydub
+librosa
+gTTS
+
+# Backend - Utilities
+requests
+aiohttp
+pandas
+numpy
+python-json-logger
+sqlalchemy
+
+# Backend - Authentication
+passlib[bcrypt]
+python-jose[cryptography]
+bcrypt
+
