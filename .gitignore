@@ -52,3 +52,13 @@ civicmind.db
 instance/
 .pytest_cache/
 coverage_html_report/
+
+# Archives, weights, and temp uploads
+.git.zip
+*.zip
+*.pt
+data/uploads/
+data/test_image*
+frontend/build_log*
+frontend/dist/
+

@@ -1,192 +1,166 @@
-from backend.agents.tools import get_tools, vision_service, llm_service, rag_service
+from backend.agents.tools import get_tools, vision_service, llm_service
+from backend.services.yolo_service import YoloService
+from backend.agents.risk_engine import RiskEngine
+from backend.services.alert_service import AlertService
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
 class CoordinatorAgent:
     def __init__(self):
         self.tools = get_tools()
-        logger.info("Coordinator Agent Initialized")
+        self.yolo_service = YoloService()
+        self.risk_engine = RiskEngine()
+        self.alert_service = AlertService()
+        logger.info("Coordinator Agent Initialized with YOLO, Risk Engine & Alert Service")
 
     async def process_assessment_request(self, image_path: str, user_context: str = ""):
         """
         Orchestrates the full safety assessment workflow:
-        1. Vision Agent: Detect hazards in image (Visible Elements)
-        2. Logic Engine: Rule-based risk mapping (No Hallucination)
-        3. LLM Agent: Explain risks to user
+        1. Vision Agent (YOLO + BLIP): Detect hazards
+        2. Relevance Gate: Dismiss random images
+        3. Risk Engine: Calculate Context-Aware Score
+        4. Explanation Engine: Structured JSON output
         """
         try:
-            # Step 1: Vision Analysis (Feature Extraction)
-            logger.info("Step 1: Analyzing Image Features...")
+            # --- Step 1: Vision Analysis (Multi-Model) ---
+            logger.info("Step 1: Running Vision Stack (YOLO + BLIP)...")
+            
+            # Run YOLO (Object Detection)
+            yolo_result = self.yolo_service.analyze_image(image_path)
+            yolo_detections = yolo_result.get("detections", [])
+            yolo_labels = [d["label"] for d in yolo_detections]
+            
+            # Run BLIP (Captioning - fallback/context)
+            # We still keep BLIP for "scene description" which YOLO doesn't give
             vision_result = await vision_service.analyze_image(image_path)
-            
-            if "error" in vision_result and "Simulated" not in vision_result.get("description", ""):
-                 return {"error": f"Vision Analysis Failed: {vision_result.get('error')}"}
+            blip_description = vision_result.get("description", "")
+            blip_objects = vision_result.get("objects", [])
 
-            scene_description = vision_result.get("description", "")
-            visible_objects = vision_result.get("objects", [])
-            visible_conditions = vision_result.get("conditions", [])
+            # Combine insights
+            all_visible_objects = list(set(yolo_labels + blip_objects))
+            logger.info(f"Combined Vision Tags: {all_visible_objects}")
 
-            # Step 1.5: Relevance Gatekeeper (LLM or Keyword)
-            # We use LLM here to be strictly compliant, or simple keyword check
-            logger.info("Step 1.5: Checking Relevance...")
-            is_relevant, reason = await llm_service.check_relevance(scene_description)
+            # --- Step 2: Relevance Gate ---
+            logger.info("Step 2: Checking Relevance...")
+            # If YOLO detected RELEVANT classes, we can skip LLM check for speed, 
+            # or double check. Let's rely on LLM for robust gating for now.
+            is_relevant, reason = await llm_service.check_relevance(blip_description)
             
+            # Hard block if YOLO detects absolutely nothing relevant but also nothing specifically irrelevant?
+            # For now, trust the Gatekeeper.
             if not is_relevant:
                 return {
                     "status": "denied",
                     "error": reason,
-                    "vision_analysis": vision_result,
+                    "vision_analysis": {"description": blip_description},
                     "risk_assessment": {"risk_level": "None", "explanation": reason}
                 }
 
-            # Step 2: Logic Engine (Rule-based)
-            logger.info("Step 2: Applying Risk Logic...")
-            logic_risks, logic_risk_level = self._apply_risk_logic(visible_objects, visible_conditions)
-
-            # Step 3: Explanation (LLM) using ONLY verified logic
-            logger.info("Step 3: Generating Explanation...")
+            # --- Step 3: Risk Engine (Dynamic Scoring) ---
+            logger.info("Step 3: Calculating Risk Score...")
             
-            if not logic_risks:
-                 # No risks detected by logic -> Safe
+            # Map YOLO/BLIP tags to generic hazards for the engine
+            # (RiskEngine does string matching, so we pass the raw labels)
+            risk_calculation = self.risk_engine.calculate_risk(
+                visual_hazards=all_visible_objects,
+                audio_hazards=[], # No audio in this flow yet
+                context_data={"time_of_day": "day", "location_risk_multiplier": 1.0} # Defaults
+            )
+            
+            risk_score = risk_calculation["score"]
+            risk_level = risk_calculation["level"]
+            risk_factors = risk_calculation["factors"]
+            
+            logger.info(f"Risk Score: {risk_score} ({risk_level})")
+
+            # --- Step 4: Explanation (Structured) ---
+            logger.info("Step 4: Generating Structured Explanation...")
+            
+            if risk_score < 3.0:
+                 # Low Risk - Simple response
                  final_assessment = {
                      "risk_level": "Low",
+                     "score": risk_score,
                      "hazards_detected": [],
-                     "recommended_actions": ["No immediate action required."],
-                     "explanation": "No immediate sanitation-related danger detected."
+                     "recommended_actions": ["No specific hazards detected", "Proceed with caution"],
+                     "explanation": "No significant safety hazards detected in this area."
                  }
             else:
-                # Ask LLM to explain the SPECIFIC logic-derived risks
-                explanation = await llm_service.generate_explanation(
-                    risks=logic_risks,
-                    visible_elements=visible_objects + visible_conditions
+                # Ask LLM to explain the high risk
+                # We pass the RISK FACTORS from the engine, not just raw objects
+                explanation_json = await llm_service.generate_structured_explanation(
+                    risks=risk_factors,
+                    visible_elements=all_visible_objects,
+                    risk_score=risk_score
                 )
+                
                 final_assessment = {
-                    "risk_level": logic_risk_level,
-                    "hazards_detected": logic_risks,
-                    "recommended_actions": ["Follow standard safety protocols"], # placeholder, LLM could expand
-                    "explanation": explanation
+                    "risk_level": risk_level,
+                    "score": risk_score,
+                    "hazards_detected": explanation_json.get("hazards", risk_factors),
+                    "recommended_actions": explanation_json.get("action_items", ["Contact Supervisor"]),
+                    "explanation": explanation_json.get("explanation", "High risk detected.")
                 }
 
-            # Construct Final Response
+            # --- Step 5: Automation (Supervisor Alert) ---
+            if risk_score >= 8.0:
+                 await self.alert_service.trigger_critical_alert({
+                     "score": risk_score,
+                     "level": risk_level,
+                     "hazards": final_assessment["hazards_detected"]
+                 })
+
+            # Construct Final Response including annotated image path
             return {
-                "assessment_id": "gen_id_123",
-                "vision_analysis": vision_result,
+                "assessment_id": "gen_id_" + str(int(risk_score*100)),
+                "vision_analysis": {
+                    "description": blip_description,
+                    "annotated_image": yolo_result.get("annotated_image_path"),
+                    "objects": all_visible_objects
+                },
                 "risk_assessment": final_assessment
             }
             
         except Exception as e:
             logger.error(f"Assessment Workflow Failed: {e}")
+            import traceback
+            traceback.print_exc()
             return {"error": str(e)}
 
-    def _apply_risk_logic(self, objects: list, conditions: list):
-        """
-        Rule-Based Logic Engine.
-        Maps visible elements to strict risks. 
-        Returns: (list of risks, risk level string)
-        """
-        risks = []
-        risk_level = "Low"
-        
-        # Normalize inputs
-        obj_set = {o.lower() for o in objects}
-        cond_set = {c.lower() for c in conditions}
-        all_features = obj_set.union(cond_set)
-
-        # Rule 1: Toxic Gas (Confined space + water/waste)
-        if ("open drain" in all_features or "manhole" in all_features) and \
-           ("stagnant water" in all_features or "garbage" in all_features):
-            risks.append("Toxic Gas Risk (H2S/Methane)")
-            risk_level = "High"
-
-        # Rule 1: Confined Space / High Risk Infrastructure (High Risk)
-        # Catch: tanks, manholes, sewers, silos, pits
-        if any(x in all_features for x in ["tank", "silo", "vat", "pit", "manhole", "sewer", "tunnel", "duct", "drain", "chamber"]):
-            risks.append("Confined Space Hazard (Toxic Gas/Suffocation)")
-            risk_level = "High"
-
-        # Rule 2: Atmospheric Hazards (High Risk)
-        # Catch: gas, fumes, bubbles (methane), smoke
-        if any(x in all_features for x in ["gas", "fume", "vapor", "smoke", "bubble", "mist"]):
-            risks.append("Atmospheric Hazard (Toxic Gas)")
-            risk_level = "High"
-
-        # Rule 3: Equipment & Vehicle Dangers (Medium/High Risk)
-        # Catch: trucks, suction machines, cranes
-        if any(x in all_features for x in ["truck", "vehicle", "crane", "machine", "suction", "jetting", "heavy equipment"]):
-            risks.append("Heavy Equipment Hazard")
-            if risk_level != "High": risk_level = "Medium"
-
-        # Rule 4: Structural Instability (High Risk)
-        # Catch: collapse, cracks, trenches
-        if any(x in all_features for x in ["collapse", "cave-in", "crack", "unstable", "trench", "excavation"]):
-            risks.append("Structural Instability Risk")
-            risk_level = "High"
-
-        # Rule 5: Biological Hazards (Medium Risk)
-        # Catch: waste, sludge, insects
-        if any(x in all_features for x in ["sludge", "filth", "waste", "garbage", "feces", "sewage", "rat", "insect", "animal"]):
-            risks.append("Biological Hazard (Infection)")
-            if risk_level != "High": risk_level = "Medium"
-
-        # Rule 6: PPE Violations (Medium Risk)
-        # Catch: bare skin, missing mask/helmet (if vision detects 'bare' or specific body parts implies missing gear)
-        if any(x in all_features for x in ["bare", "skin", "foot", "feet", "hand", "face", "mouth"]):
-             risks.append("PPE Violation (Missing Safety Gear)")
-             if risk_level != "High": risk_level = "Medium"
-             
-        # Rule 7: Traffic (Medium Risk)
-        if any(x in all_features for x in ["traffic", "road", "car", "bus"]):
-             risks.append("Traffic Hazard")
-             if risk_level != "High": risk_level = "Medium"
-
-        # Rule 8: Physical Injury (Sharp objects) - Retaining old rule
-        if any(x in all_features for x in ["sharp", "glass", "metal", "needle", "syringe"]):
-            risks.append("Physical Injury Risk (Sharp Objects)")
-            if risk_level != "High": risk_level = "Medium"
-
-        # Fallback for "detected hazards" from vision service if specific rules don't match but keyword exists
-        # This covers generic "hazard" tags from BLIP
-        for f in all_features:
-            if "hazard" in f or "danger" in f:
-                risks.append(f"Unspecified Hazard: {f}")
-                if risk_level == "Low": risk_level = "Medium"
-
-        return risks, risk_level
+    # Removed _apply_risk_logic as it is now superseded by RiskEngine
 
     async def process_voice_request(self, audio_path: str):
         """
         Orchestrates voice reporting workflow:
         1. Voice Service: Transcribe audio
-        2. Risk Agent: Analyze text for hazards
+        2. Risk Engine: Analyze text for hazards
         """
         try:
             from backend.services.voice_service import VoiceService
-            # Instantiate locally to avoid circular deps if any, or use tool from init
             voice_svc = VoiceService() 
             
             # Step 1: Transcribe
-            logger.info("Step 1: Transcribing Audio...")
             transcription = await voice_svc.transcribe_audio(audio_path)
             
             if not transcription:
-                return {"error": "Voice transcription failed or was empty."}
+                return {"error": "Voice transcription failed."}
                 
-            # Step 2: Risk Assessment (LLM)
-            logger.info("Step 2: Analyzing Voice Report...")
+            # Step 2: Risk Assessment (Engine + LLM)
+            # Use Risk Engine for scoring based on keywords in text
+            # This requires extracting keywords from transcription first.
+            # For now, let's keep the LLM-based approach for Voice until we plug in a keyword extractor,
+            # BUT we should format the output to match the new structure.
+            
             risk_assessment = await llm_service.analyze_voice_report(transcription)
             
-            # Construct Final Response (matching structure needed for HazardAlertScreen)
-            # The screen expects: { risk_assessment: { risk_level, explanation, ... }, vision_analysis: { hazards_detected: ... } }
-            # Since this is voice, we map 'hazards_detected' to the vision_analysis structure or just return a unified object.
-            
-            # Parse if string (LLM service returns string or dict? _call_llm returns content string, need to ensure json)
+            # Ensure compatibility
             import json
             if isinstance(risk_assessment, str):
                 try:
                     risk_assessment = json.loads(risk_assessment)
                 except:
-                    # Fallback if LLM returns raw text
                     risk_assessment = {
                         "risk_level": "High",
                         "explanation": risk_assessment,
@@ -197,7 +171,7 @@ class CoordinatorAgent:
             return {
                 "assessment_id": "voice_gen_id_456",
                 "transcription": transcription,
-                "vision_analysis": { # Mocking vision structure for compatibility
+                "vision_analysis": { 
                     "hazards_detected": risk_assessment.get("hazards_detected", []),
                     "description": "Voice Report Analysis"
                 },

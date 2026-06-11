@@ -77,9 +77,9 @@ const InteractiveMap = ({
                         center={zone.position}
                         radius={zone.radius || 200}
                         pathOptions={{
-                            fillColor: '#DC2626',
+                            fillColor: zone.color || '#DC2626',
                             fillOpacity: 0.2,
-                            color: '#DC2626',
+                            color: zone.color || '#DC2626',
                             weight: 2,
                             opacity: 0.8
                         }}

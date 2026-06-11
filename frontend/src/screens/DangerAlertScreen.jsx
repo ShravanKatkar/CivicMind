@@ -1,26 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, AlertTriangle, HelpCircle, ChevronRight, MapPin, Phone } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, HelpCircle, ChevronRight, MapPin, Phone, Eye } from 'lucide-react';
+import RiskSpeedometer from '../components/RiskSpeedometer';
 
 const DangerAlertScreen = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [analyzing, setAnalyzing] = useState(true);
+    const [showAnnotated, setShowAnnotated] = useState(true);
 
-    const imageSrc = location.state?.imageSrc || 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop';
-
-    // Get Assessment Data from previous screen
-    const assessmentResult = location.state?.assessmentResult;
-    // Extract nested risk data if available
-    const riskData = assessmentResult?.risk_assessment || {};
+    // Get Assessment Data
+    const assessmentResult = location.state?.assessmentResult || {};
+    const riskData = assessmentResult.risk_assessment || {};
+    const visionData = assessmentResult.vision_analysis || {};
 
     // Dynamic Data Mapping
-    const riskLevel = riskData.risk_level || 'Medium'; // Low, Medium, High, Critical
+    const riskLevel = riskData.risk_level || 'Medium';
+    const riskScore = riskData.score || 5.0; // Default if missing
     const hazards = riskData.hazards_detected || ['Potential Hazard'];
     const actions = riskData.recommended_actions || ['Proceed with caution', 'Alert Supervisor'];
     const explanation = riskData.explanation || 'AI detected potential safety concerns in image.';
 
-    // Simulate AI analysis delay
+    // Image Handling
+    const originalImage = location.state?.imageSrc || 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop';
+
+    // Construct Annotated Image URL if available
+    // Backend serves 'data/uploads' at '/static'
+    // We need to extract filename from the absolute path returned by backend
+    let annotatedImageSrc = null;
+    if (visionData.annotated_image) {
+        const filename = visionData.annotated_image.split(/[\\/]/).pop();
+        // Assuming backend is at localhost:8000/static/
+        // ideally use env var, but hardcode for now or use relative if proxy setup
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        annotatedImageSrc = `${API_URL}/static/${filename}`;
+    }
+
+    const currentImage = (showAnnotated && annotatedImageSrc) ? annotatedImageSrc : originalImage;
+
+    // Simulate AI analysis delay (visual only, data is already here)
     useEffect(() => {
         const timer = setTimeout(() => {
             setAnalyzing(false);
@@ -52,7 +70,7 @@ const DangerAlertScreen = () => {
                     AI is Thinking...
                 </h2>
                 <p className="text-white/80 text-center max-w-sm">
-                    Analyzing risks and detecting potential dangers in the image
+                    Analyzing risks (YOLOv8 + Context Engine)...
                 </p>
 
                 <div className="flex gap-2 mt-8">
@@ -83,25 +101,41 @@ const DangerAlertScreen = () => {
                     <h1 className="text-lg font-bold text-white">
                         AI Safety Assessment
                     </h1>
-                    <button className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
-                        •••
-                    </button>
+                    <div className="w-10"></div>
                 </div>
             </div>
 
             <div className="px-6 -mt-4 space-y-4">
                 {/* Site Image Card */}
-                <div
-                    className="rounded-3xl overflow-hidden shadow-lg"
-                    style={{
-                        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-                    }}
-                >
+                <div className="relative rounded-3xl overflow-hidden shadow-lg bg-black">
                     <img
-                        src={imageSrc}
+                        src={currentImage}
                         alt="Site"
-                        className="w-full h-56 object-cover"
+                        className="w-full h-64 object-contain bg-black"
                     />
+                    {annotatedImageSrc && (
+                        <button
+                            onClick={() => setShowAnnotated(!showAnnotated)}
+                            className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs flex items-center gap-2"
+                        >
+                            <Eye size={14} />
+                            {showAnnotated ? 'Show Original' : 'Show AI Vision'}
+                        </button>
+                    )}
+                </div>
+
+                {/* Risk Meter Section */}
+                <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col items-center">
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Real-time Risk Score</h3>
+                    <RiskSpeedometer score={riskScore} size={220} />
+
+                    <div className={`mt-4 px-4 py-1.5 rounded-full text-sm font-bold ${riskLevel.includes('Critical') ? 'bg-red-100 text-red-700' :
+                            riskLevel.includes('High') ? 'bg-orange-100 text-orange-700' :
+                                riskLevel.includes('Medium') ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-green-100 text-green-700'
+                        }`}>
+                        {riskLevel.toUpperCase()} LEVEL
+                    </div>
                 </div>
 
                 {/* Danger Icons Strip (Dynamic) */}
@@ -111,18 +145,18 @@ const DangerAlertScreen = () => {
                             <span className="absolute top-1.5 -left-[3px] text-white text-[8px] font-bold">!</span>
                         </div>
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                            AI Detected Hazards
+                            Verified Hazards
                         </span>
                     </div>
 
-                    <div className="flex gap-3 overflow-x-auto pb-2">
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                         {hazards.length > 0 ? hazards.map((hazard, i) => (
-                            <div key={i} className="flex flex-col items-center gap-1.5 min-w-[70px]">
-                                <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-2xl border border-gray-100">
+                            <div key={i} className="flex flex-col items-center gap-1.5 min-w-[80px]">
+                                <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-2xl border border-red-100">
                                     ⚠️
                                 </div>
-                                <span className="text-[10px] text-gray-600 font-semibold text-center leading-tight">
-                                    {hazard}
+                                <span className="text-[10px] text-gray-800 font-semibold text-center leading-tight">
+                                    {hazard.replace(/\(.*\)/, '')}
                                 </span>
                             </div>
                         )) : (
@@ -131,43 +165,14 @@ const DangerAlertScreen = () => {
                     </div>
                 </div>
 
-                {/* Risk Level Banner (Dynamic Color) */}
-                <div
-                    className="rounded-2xl p-4 flex items-center justify-between"
-                    style={{
-                        background: getRiskColor(riskLevel),
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-                    }}
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                            <AlertTriangle className="w-6 h-6 text-white" fill="currentColor" />
-                        </div>
-                        <div>
-                            <h3 className="text-white font-bold text-lg">{riskLevel} Risk</h3>
-                            <p className="text-white/80 text-xs">AI Assessment Complete</p>
-                        </div>
-                    </div>
-                    {/* Only pulse if high risk */}
-                    {(riskLevel.includes('High') || riskLevel.includes('Critical')) && (
-                        <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                    )}
-                </div>
-
                 {/* Risks Why Card (Dynamic) */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm">
-                    <div className="flex gap-4 items-start mb-4">
-                        <div
-                            className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                            style={{
-                                background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                            }}
-                        >
-                            <HelpCircle className="w-6 h-6 text-white" />
+                <div className="bg-white rounded-3xl p-5 shadow-sm border-l-4 border-blue-500">
+                    <div className="flex gap-4 items-start">
+                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center shrink-0">
+                            <HelpCircle className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-gray-900 text-lg mb-2">Analysis</h3>
+                            <h3 className="font-bold text-gray-900 text-base mb-1">AI Analysis</h3>
                             <p className="text-gray-600 text-sm leading-relaxed">
                                 {explanation}
                             </p>
@@ -181,66 +186,31 @@ const DangerAlertScreen = () => {
                         <h3 className="font-bold text-gray-900 text-base">
                             Recommended Actions
                         </h3>
-                        <ChevronRight className="w-5 h-5 text-gray-400" />
                     </div>
 
-                    <div className="space-y-2.5 mb-4">
+                    <div className="space-y-3 mb-2">
                         {actions.map((action, i) => (
-                            <div key={i} className="flex items-center gap-3 text-gray-600 text-sm">
-                                <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full"></div>
+                            <div key={i} className="flex items-start gap-3 text-gray-700 text-sm">
+                                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
+                                    <span className="text-green-600 font-bold text-xs">{i + 1}</span>
+                                </div>
                                 <span className="font-medium">{action}</span>
                             </div>
                         ))}
-                    </div>
-
-                    {/* Illustration */}
-                    <div className="flex justify-end -mr-2 -mb-2">
-                        <div className="relative">
-                            <div className="w-10 h-10 bg-orange-400 rounded-full"></div>
-                            <div className="w-12 h-12 bg-blue-100 rounded-full absolute top-0 left-4 flex items-center justify-center">
-                                <MapPin className="w-5 h-5 text-indigo-600" />
-                            </div>
-                        </div>
                     </div>
                 </div>
 
                 {/* Send Alert Button */}
                 <button
                     onClick={() => navigate('/live-safety')}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-base py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:shadow-xl transition-all active:scale-95"
+                    className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white font-bold text-base py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:shadow-xl transition-all active:scale-95"
                     style={{
-                        boxShadow: '0 10px 30px rgba(99, 102, 241, 0.4)',
+                        boxShadow: '0 10px 30px rgba(220, 38, 38, 0.3)',
                     }}
                 >
-                    Send Alert to Supervisor
-                    <ChevronRight className="w-5 h-5" />
+                    <AlertTriangle className="w-5 h-5" />
+                    Escalate to Supervisor
                 </button>
-
-                {/* Incident Report Card */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm border border-orange-100">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                            <AlertTriangle className="w-5 h-5 text-orange-600" />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-gray-900 text-sm">
-                                Incident Report Generated
-                            </h3>
-                            <p className="text-gray-500 text-xs">
-                                AI has analyzed the situation
-                            </p>
-                        </div>
-                    </div>
-
-                    <p className="text-xs text-gray-500 leading-relaxed mb-3">
-                        Save your data regarding data via this incident report, and passing the data into the database.
-                    </p>
-
-                    <button className="w-full bg-purple-50 text-purple-700 font-semibold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-purple-100 transition-colors">
-                        <Phone className="w-4 h-4" />
-                        Contact Supervisor
-                    </button>
-                </div>
             </div>
         </div >
     );

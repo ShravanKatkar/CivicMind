@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Python/Virtual Environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local databases and uploads
+civicmind.db
+data/uploads/*
+data/embeddings/*
+
+# Frontend dependencies and builds (since frontend will run on Vercel)
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+
+# Development resources
+notebooks/
+docs/
+*.zip
+*.bat
+tests/
+.env

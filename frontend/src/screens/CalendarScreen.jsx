@@ -176,7 +176,7 @@ const CalendarScreen = () => {
     const selectedDayData = selectedDay ? getDayData(selectedDay) : null;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pb-20 transition-colors duration-300">
+        <div className="transition-colors duration-300">
             {/* Header */}
             <div
                 className="rounded-b-[32px] pt-12 pb-8 px-6"

@@ -1,4 +1,5 @@
 # Backend - AI/ML Libraries
+ultralytics
 transformers
 torch
 torchvision

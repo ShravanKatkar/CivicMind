@@ -58,33 +58,56 @@ class LLMService:
         except Exception:
             return True, "Relevance check skipped (Service Error)."
 
-    async def generate_explanation(self, risks: list, visible_elements: list):
+    async def generate_structured_explanation(self, risks: list, visible_elements: list, risk_score: float):
         """
-        Generates a human-friendly explanation for the detected risks.
-        Uses ONLY the provided risks as truth.
+        Generates a human-friendly explanation for the detected risks in JSON format.
         """
         if self.simulation_mode:
-            return f"Simulated explanation: The area contains {', '.join(risks)}. This is dangerous because of potential toxic gases or injury. Please wear protective gear."
+            return {
+                "explanation": f"The area contains {', '.join(risks)}. This is dangerous because of detected hazards.",
+                "action_items": ["Wear PPE detected", "Maintain distance"],
+                "hazards": risks
+            }
 
         prompt = f"""
         (A) FINAL MASTER PROMPT (ANTI-HALLUCINATION)
-        You are CivicMind AI, a safety assistant for Indian sanitation and drainage workers.
-
-        CRITICAL RULES:
-        1. You have been given a list of VERIFIED RISKS and VISIBLE MODELS by a Logic Engine.
-        2. DO NOT invent new risks.
-        3. Explain strictly why the provided risks are dangerous.
-        4. Use simple language suitable for Indian field workers.
-
+        You are CivicMind AI, a safety assistant for Indian sanitation workers.
+        
         INPUT DATA:
-        - Visible Objects/Conditions: {visible_elements}
         - Verified Risks: {risks}
+        - Risk Score: {risk_score}/10
+        - Visible Elements: {visible_elements}
 
-        OUTPUT:
-        Provide a concise explanation (2-3 sentences max) explaining the danger.
-        Example: "This area is dangerous because the open drain with stagnant water can release toxic gases."
+        INSTRUCTIONS:
+        1. Context: Explain why these specific risks are dangerous in a sanitation context.
+        2. Tone: Urgent, clear, and professional.
+        3. Output: Strict JSON format.
+
+        OUTPUT JSON Structure:
+        {{
+            "explanation": "2-3 short sentences on WHY it is dangerous.",
+            "action_items": ["3 bullet points on what to do immediately"],
+            "hazards": ["List of confirmed hazards"]
+        }}
         """
-        return await self._call_llm(prompt)
+        response_text = await self._call_llm(prompt)
+        
+        import json
+        try:
+             # Clean up potential markdown code blocks
+            if "```json" in response_text:
+                response_text = response_text.split("```json")[1].split("```")[0].strip()
+            elif "```" in response_text:
+                response_text = response_text.split("```")[1].strip()
+            
+            return json.loads(response_text)
+        except Exception as e:
+            logger.error(f"Failed to parse LLM JSON: {e}")
+            return {
+                "explanation": "High risk detected. Please follow safety protocols.",
+                "action_items": ["Evacuate if unsafe", "Contact Supervisor"],
+                "hazards": risks
+            }
 
     async def get_risk_assessment_deprecated(self, site_context, image_analysis):
         # Kept for compatibility if needed, but not used in main flow

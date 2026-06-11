@@ -59,11 +59,11 @@ const HomeScreen = () => {
 
     return (
         <div
-            className="min-h-screen pb-20 bg-gray-50 dark:bg-slate-900 transition-colors duration-300"
+            className="transition-colors duration-300"
         >
             {/* Header */}
             <div
-                className="rounded-b-[32px] pt-8 pb-6 px-6 mb-4 relative overflow-hidden"
+                className="rounded-b-[24px] pt-6 pb-4 px-5 mb-2 relative overflow-hidden"
                 style={{
                     background: 'var(--gov-header-gradient)',
                     boxShadow: 'var(--shadow-soft)',
@@ -79,21 +79,23 @@ const HomeScreen = () => {
                     }}
                 />
 
-                {/* Logo & Branding - Aligned Center */}
-                <div className="flex flex-col items-center justify-center mb-4 relative z-10">
-                    <div className="mb-2 transform hover:scale-105 transition-transform duration-300">
-                        <Logo size={80} />
+                {/* Logo & Branding - Aligned Left & Compact */}
+                <div className="flex items-center gap-4 mb-3 relative z-10">
+                    <div className="transform hover:scale-105 transition-transform duration-300">
+                        <Logo size={64} />
                     </div>
-                    <h1 className="text-4xl font-extrabold text-white tracking-tight mb-0.5 text-center drop-shadow-lg font-heading">
-                        CivicMind
-                    </h1>
-                    <p className="text-blue-50 text-xs font-semibold tracking-wider uppercase text-center opacity-90">
-                        Municipal Safety Intelligence
-                    </p>
+                    <div className="flex flex-col justify-center h-full pt-1">
+                        <h1 className="text-3xl font-extrabold text-white tracking-tight leading-none font-heading shadow-black/10 drop-shadow-md">
+                            CivicMind
+                        </h1>
+                        <p className="text-blue-100 text-[11px] font-bold tracking-widest uppercase opacity-90 leading-tight mt-1 ml-0.5">
+                            Municipal Safety
+                        </p>
+                    </div>
                 </div>
 
                 {/* Search Bar */}
-                <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl px-5 py-4 flex items-center shadow-xl relative z-10 transition-colors duration-300 border border-white/20">
+                <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl px-4 py-3 flex items-center shadow-lg relative z-10 transition-colors duration-300 border border-white/20">
                     <Search className="w-5 h-5 text-gray-400 mr-3" />
                     <input
                         type="text"
@@ -112,7 +114,7 @@ const HomeScreen = () => {
 
             <div className="px-6">
                 {/* Tabs */}
-                <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide py-2">
+                <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide py-2">
                     {tabs.map((tab) => (
                         <button
                             key={tab}

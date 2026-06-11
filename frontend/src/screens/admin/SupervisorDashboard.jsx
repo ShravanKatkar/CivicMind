@@ -8,6 +8,7 @@ import Button from '../../components/common/Button';
 import WorkerTable from './components/WorkerTable';
 import AlertsPanel from './components/AlertsPanel';
 import MapPanel from './components/MapPanel';
+import HazardTimeline from './components/HazardTimeline';
 import Logo from '../../components/common/Logo';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -169,11 +170,17 @@ const SupervisorDashboard = () => {
                                     ))}
                                 </div>
 
-                                {/* Main Visual */}
-                                <MapPanel
-                                    className="flex-1 min-h-[400px] rounded-3xl overflow-hidden shadow-sm"
-                                    district={user?.district}
-                                />
+                                {/* Main Visuals Grid */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[400px]">
+                                    {/* High Risk Map (Heatmap simulated) */}
+                                    <MapPanel
+                                        className="rounded-3xl overflow-hidden shadow-sm"
+                                        district={user?.district}
+                                    />
+
+                                    {/* Hazard Timeline */}
+                                    <HazardTimeline />
+                                </div>
 
                                 {/* Secondary Table */}
                                 <div className="flex-1">

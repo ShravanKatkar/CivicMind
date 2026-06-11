@@ -16,9 +16,9 @@ const MobileLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-neutral-50 dark:bg-slate-900 font-sans text-neutral-900 dark:text-white transition-colors duration-300">
+        <div className="min-h-screen bg-neutral-50 dark:bg-slate-900 font-sans text-neutral-900 dark:text-white transition-colors duration-300 flex flex-col">
             {/* Main Content */}
-            <div className="min-h-screen pb-20">
+            <div className="flex-1 pb-20 overflow-y-auto">
                 <Outlet />
             </div>
 
