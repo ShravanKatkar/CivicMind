@@ -4,7 +4,7 @@ FROM python:3.10-slim
 # Install system dependencies needed for OpenCV, Whisper (FFmpeg), and PyAudio
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     ffmpeg \
     portaudio19-dev \
