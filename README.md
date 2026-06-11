@@ -1,3 +1,12 @@
+---
+title: CivicMind Backend
+emoji: 🧠
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+---
+
 # CivicMind AI - Enterprise Safety Platform (v2.0)
 
 CivicMind AI is an advanced **Safety Intelligence Platform** designed strictly for sanitation workers. It leverages a **Hybrid AI Architecture** combining Computer Vision (YOLOv8 + BLIP), Deterministic Risk Scoring, and Generative AI to provide **Hallucination-Free** safety assessments in real-time.
