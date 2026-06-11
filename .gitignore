@@ -58,6 +58,7 @@ coverage_html_report/
 *.zip
 *.pt
 data/uploads/
+data/embeddings/
 data/test_image*
 frontend/build_log*
 frontend/dist/
