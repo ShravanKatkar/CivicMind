@@ -36,5 +36,5 @@ sqlalchemy
 # Backend - Authentication
 passlib[bcrypt]
 python-jose[cryptography]
-bcrypt
+bcrypt==3.2.0
 
