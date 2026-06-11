@@ -2,6 +2,12 @@
 Authentication utilities for CivicMind AI
 Handles password hashing and JWT token generation
 """
+# Fix passlib compatibility with bcrypt >= 4.0.0
+# bcrypt 4.x removed the __about__ attribute that passlib relies on
+import bcrypt as _bcrypt
+if not hasattr(_bcrypt, '__about__'):
+    _bcrypt.__about__ = type('obj', (object,), {'__version__': _bcrypt.__version__})
+
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
