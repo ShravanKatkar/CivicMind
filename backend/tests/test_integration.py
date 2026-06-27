@@ -28,12 +28,28 @@ async def test_assessment_flow():
     with open("test_image.jpg", "wb") as f:
         f.write(b"dummy image content")
 
-    # Mock the internal services to avoid real API calls
-    with patch("backend.services.vision_service.VisionService.analyze_image", new_callable=AsyncMock) as mock_vision, \
-         patch("backend.services.llm_service.LLMService.get_risk_assessment", new_callable=AsyncMock) as mock_llm:
+    # Mock the internal services to avoid real API/model calls and slow PyTorch loads
+    with patch("backend.services.yolo_service.YoloService.analyze_image") as mock_yolo, \
+         patch("backend.services.vision_service.VisionService.analyze_image", new_callable=AsyncMock) as mock_vision, \
+         patch("backend.services.llm_service.LLMService.check_relevance", new_callable=AsyncMock) as mock_relevance, \
+         patch("backend.services.llm_service.LLMService.generate_structured_explanation", new_callable=AsyncMock) as mock_llm:
         
-        mock_vision.return_value = MOCK_VISION_RESPONSE
-        mock_llm.return_value = MOCK_LLM_RESPONSE
+        mock_yolo.return_value = {
+            "detections": [{"label": "open manhole", "confidence": 0.9, "bbox": [0,0,10,10]}],
+            "annotated_image_path": "dummy_annotated.jpg"
+        }
+        mock_vision.return_value = {
+            "description": MOCK_VISION_RESPONSE["description"],
+            "objects": ["open manhole"],
+            "conditions": [],
+            "hazards_detected": ["open manhole"]
+        }
+        mock_relevance.return_value = (True, "Relevant safety context detected.")
+        mock_llm.return_value = {
+            "explanation": MOCK_LLM_RESPONSE["explanation"],
+            "action_items": MOCK_LLM_RESPONSE["recommendations"],
+            "hazards": ["Fall Hazard"]
+        }
 
         with open("test_image.jpg", "rb") as f:
             response = client.post(
@@ -65,8 +81,18 @@ async def test_voice_command():
     with open("test_audio.wav", "wb") as f:
         f.write(b"dummy audio content")
         
-    with patch("backend.services.voice_service.VoiceService.process_voice_command", new_callable=AsyncMock) as mock_voice:
-        mock_voice.return_value = "Help! There is a fire hazard here."
+    with patch("backend.services.voice_service.VoiceService.transcribe_audio", new_callable=AsyncMock) as mock_transcribe, \
+         patch("backend.services.llm_service.LLMService.analyze_voice_report", new_callable=AsyncMock) as mock_llm_voice:
+         
+        mock_transcribe.return_value = "Help! There is a fire hazard here."
+        mock_llm_voice.return_value = {
+            "status": "Success",
+            "risk_level": "High",
+            "explanation": "Reported hazard from voice description.",
+            "hazards_detected": ["Fire Hazard"],
+            "recommended_actions": ["Evacuate immediately", "Alert supervisor"],
+            "action": "report_hazard"
+        }
         
         with open("test_audio.wav", "rb") as f:
             response = client.post(

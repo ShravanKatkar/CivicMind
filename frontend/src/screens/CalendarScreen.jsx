@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
     ChevronLeft, ChevronRight, Clock, MapPin, Camera, Mic,
     AlertTriangle, LogIn, LogOut, User, Calendar as CalendarIcon,
-    TrendingUp
+    TrendingUp, Shield, ShieldCheck, ShieldAlert
 } from 'lucide-react';
 import { useTranslation } from '../context/LanguageContext';
 
@@ -108,36 +109,36 @@ const CalendarScreen = () => {
 
     const getAttendanceColor = (day) => {
         const data = getDayData(day);
-        if (!data) return 'bg-gray-50';
+        if (!data) return 'bg-[#F7F9FC] dark:bg-slate-800 text-slate-gray';
 
         const status = data.attendance?.status;
-        if (status === 'present') return 'bg-green-100 border-2 border-green-500';
-        if (status === 'half-day') return 'bg-orange-100 border-2 border-orange-500';
-        if (status === 'absent') return 'bg-red-100 border-2 border-red-500';
-        return 'bg-gray-50';
+        if (status === 'present') return 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/25';
+        if (status === 'half-day') return 'bg-amber-500/10 text-amber-500 border border-amber-500/25';
+        if (status === 'absent') return 'bg-alert-red/10 text-alert-red border border-alert-red/25';
+        return 'bg-[#F7F9FC] dark:bg-slate-800 text-slate-gray';
     };
 
     const getActivityIcon = (type) => {
         switch (type) {
-            case 'login': return <LogIn className="w-4 h-4" />;
-            case 'logout': return <LogOut className="w-4 h-4" />;
-            case 'site_visit': return <MapPin className="w-4 h-4" />;
-            case 'photo_report': return <Camera className="w-4 h-4" />;
-            case 'voice_report': return <Mic className="w-4 h-4" />;
-            case 'danger_alert': return <AlertTriangle className="w-4 h-4" />;
-            default: return <User className="w-4 h-4" />;
+            case 'login': return <LogIn className="w-4.5 h-4.5" />;
+            case 'logout': return <LogOut className="w-4.5 h-4.5" />;
+            case 'site_visit': return <MapPin className="w-4.5 h-4.5" />;
+            case 'photo_report': return <Camera className="w-4.5 h-4.5" />;
+            case 'voice_report': return <Mic className="w-4.5 h-4.5" />;
+            case 'danger_alert': return <AlertTriangle className="w-4.5 h-4.5" />;
+            default: return <User className="w-4.5 h-4.5" />;
         }
     };
 
     const getActivityColor = (type) => {
         switch (type) {
-            case 'login': return 'bg-gov-navy text-white';
-            case 'logout': return 'bg-gov-slate text-white';
-            case 'site_visit': return 'bg-gov-accent-teal text-white';
-            case 'photo_report': return 'bg-gov-navy-light text-white';
-            case 'voice_report': return 'bg-gov-safety-green text-white';
-            case 'danger_alert': return 'bg-gov-warning-amber text-white';
-            default: return 'bg-gray-500 text-white';
+            case 'login': return 'bg-blue-100 dark:bg-blue-900/20 text-electric-blue border border-electric-blue/15';
+            case 'logout': return 'bg-slate-100 dark:bg-slate-700/30 text-slate-gray border border-slate-200/50';
+            case 'site_visit': return 'bg-cyan-100 dark:bg-cyan-900/20 text-vivid-cyan border border-vivid-cyan/15';
+            case 'photo_report': return 'bg-blue-100 dark:bg-blue-900/20 text-electric-blue border border-electric-blue/15';
+            case 'voice_report': return 'bg-emerald-100 dark:bg-emerald-900/20 text-neon-green border border-neon-green/15';
+            case 'danger_alert': return 'bg-orange-100 dark:bg-orange-900/20 text-blazing-amber border border-blazing-amber/15';
+            default: return 'bg-gray-100 dark:bg-slate-700 text-gray-500';
         }
     };
 
@@ -153,7 +154,6 @@ const CalendarScreen = () => {
         }
     };
 
-    // Calculate monthly statistics
     const calculateMonthlyStats = () => {
         let totalDays = 0;
         let totalHours = 0;
@@ -176,72 +176,78 @@ const CalendarScreen = () => {
     const selectedDayData = selectedDay ? getDayData(selectedDay) : null;
 
     return (
-        <div className="transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F9FC] dark:bg-slate-900 pb-24 transition-colors duration-300">
             {/* Header */}
-            <div
-                className="rounded-b-[32px] pt-12 pb-8 px-6"
-                style={{
-                    background: 'var(--gov-header-gradient)',
-                }}
-            >
-                <h1 className="text-2xl font-bold text-white mb-6 text-center">
+            <div className="bg-gradient-to-tr from-electric-blue via-[#1D4ED8] to-vivid-cyan rounded-b-[32px] pt-12 pb-12 px-6 shadow-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+                
+                <h1 className="text-xl font-extrabold text-white mb-6 text-center font-display tracking-tight uppercase">
                     {t('calendar.title')}
                 </h1>
 
-                {/* Monthly Statistics */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                        <p className="text-white/80 text-xs">{t('calendar.daysWorked')}</p>
-                        <p className="text-white text-xl md:text-2xl font-bold">{stats.totalDays}/{daysInMonth}</p>
+                {/* Monthly Statistics Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-sm">
+                        <span className="text-[10px] font-bold text-blue-100 uppercase tracking-widest block mb-1">
+                            {t('calendar.daysWorked')}
+                        </span>
+                        <p className="text-white text-xl font-bold font-data">{stats.totalDays}/{daysInMonth}</p>
                     </div>
-                    <div className="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                        <p className="text-white/80 text-xs">{t('calendar.totalHours')}</p>
-                        <p className="text-white text-xl md:text-2xl font-bold">{Math.floor(stats.totalHours)}h {Math.round((stats.totalHours % 1) * 60)}m</p>
+                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-sm">
+                        <span className="text-[10px] font-bold text-blue-100 uppercase tracking-widest block mb-1">
+                            {t('calendar.totalHours')}
+                        </span>
+                        <p className="text-white text-xl font-bold font-data">
+                            {Math.floor(stats.totalHours)}h {Math.round((stats.totalHours % 1) * 60)}m
+                        </p>
                     </div>
-                    <div className="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                        <p className="text-white/80 text-xs">{t('calendar.avgDailyHours')}</p>
-                        <p className="text-white text-xl md:text-2xl font-bold">{stats.avgHours.toFixed(1)}h</p>
+                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-sm">
+                        <span className="text-[10px] font-bold text-blue-100 uppercase tracking-widest block mb-1">
+                            Avg Hours
+                        </span>
+                        <p className="text-white text-xl font-bold font-data">{stats.avgHours.toFixed(1)}h</p>
                     </div>
-                    <div className="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                        <p className="text-white/80 text-xs">{t('calendar.attendanceRate')}</p>
-                        <p className="text-white text-xl md:text-2xl font-bold">{stats.attendanceRate.toFixed(0)}%</p>
+                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-sm">
+                        <span className="text-[10px] font-bold text-blue-100 uppercase tracking-widest block mb-1">
+                            Attendance Rate
+                        </span>
+                        <p className="text-white text-xl font-bold font-data">{stats.attendanceRate.toFixed(0)}%</p>
                     </div>
                 </div>
 
-                {/* Month Navigation */}
-                <div className="flex items-center justify-between bg-white/20 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/10">
-                    <button onClick={previousMonth} className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+                {/* Month Navigation Row */}
+                <div className="flex items-center justify-between bg-white/15 backdrop-blur-md rounded-2xl px-4 py-2.5 border border-white/15">
+                    <button onClick={previousMonth} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all active:scale-90">
                         <ChevronLeft className="w-5 h-5" />
                     </button>
-                    <h2 className="text-white font-bold text-lg">
+                    <h2 className="text-white font-extrabold text-sm uppercase tracking-wide">
                         {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                     </h2>
-                    <button onClick={nextMonth} className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+                    <button onClick={nextMonth} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all active:scale-90">
                         <ChevronRight className="w-5 h-5" />
                     </button>
                 </div>
             </div>
 
-            <div className="px-6 -mt-4">
-                {/* Calendar Grid */}
-                <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-sm mb-6 transition-colors duration-300">
-                    {/* Day Names */}
-                    <div className="grid grid-cols-7 gap-2 mb-3">
+            {/* Grid Container */}
+            <div className="px-6 -mt-6">
+                {/* Calendar Grid Container Card */}
+                <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-soft border border-gray-100 dark:border-slate-700/60 mb-6">
+                    {/* Day Titles */}
+                    <div className="grid grid-cols-7 gap-2 mb-4 text-center">
                         {dayNames.map((day) => (
-                            <div key={day} className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400">
-                                {day}
+                            <div key={day} className="text-[10px] font-extrabold text-slate-gray dark:text-gray-400 uppercase tracking-wider">
+                                {day.slice(0, 1)}
                             </div>
                         ))}
                     </div>
 
-                    {/* Calendar Days */}
+                    {/* Day Buttons Grid */}
                     <div className="grid grid-cols-7 gap-2">
-                        {/* Empty cells */}
                         {Array.from({ length: startingDayOfWeek }).map((_, index) => (
                             <div key={`empty-${index}`} className="aspect-square" />
                         ))}
 
-                        {/* Days */}
                         {Array.from({ length: daysInMonth }).map((_, index) => {
                             const day = index + 1;
                             const dayData = getDayData(day);
@@ -256,16 +262,16 @@ const CalendarScreen = () => {
                                     onClick={() => setSelectedDay(day)}
                                     className={`aspect-square flex flex-col items-center justify-center rounded-xl relative transition-all
                                         ${getAttendanceColor(day)}
-                                        ${isToday ? 'ring-2 ring-gov-navy-light' : ''}
-                                        ${isSelected ? 'ring-4 ring-gov-navy dark:ring-blue-400 scale-105 z-10' : ''}
+                                        ${isToday ? 'ring-2 ring-electric-blue' : ''}
+                                        ${isSelected ? 'ring-4 ring-electric-blue/40 scale-105 z-10' : ''}
                                         ${dayData ? 'cursor-pointer hover:scale-105' : 'cursor-default'}
                                     `}
                                 >
-                                    <span className={`text-sm font-semibold ${isToday ? 'text-gov-navy font-bold' : 'text-gray-900'}`}>
+                                    <span className={`text-xs font-bold ${isToday ? 'text-electric-blue' : 'text-slate-gray dark:text-white'}`}>
                                         {day}
                                     </span>
                                     {dayData?.attendance?.loginTime && (
-                                        <span className="text-[8px] text-gray-600 font-medium -mt-1">
+                                        <span className="text-[7px] font-extrabold text-slate-gray/80 dark:text-gray-300 mt-0.5 leading-none">
                                             {dayData.attendance.loginTime.slice(0, 5)}
                                         </span>
                                     )}
@@ -274,94 +280,97 @@ const CalendarScreen = () => {
                         })}
                     </div>
 
-                    {/* Legend */}
-                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="grid grid-cols-3 gap-2">
-                            <div className="flex items-center gap-1">
-                                <div className="w-3 h-3 rounded-full bg-green-500" />
-                                <span className="text-xs text-gray-600 dark:text-gray-400">Present</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <div className="w-3 h-3 rounded-full bg-orange-500" />
-                                <span className="text-xs text-gray-600 dark:text-gray-400">Half Day</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <div className="w-3 h-3 rounded-full bg-red-500" />
-                                <span className="text-xs text-gray-600 dark:text-gray-400">Absent</span>
-                            </div>
+                    {/* Map Legend Indicators */}
+                    <div className="mt-5 pt-4 border-t border-gray-100 dark:border-slate-700/60 flex items-center justify-around text-[10px] font-bold text-slate-gray uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                            <span>Present</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                            <span>Half Day</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-alert-red" />
+                            <span>Absent</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Selected Day Details */}
+                {/* Selected Day Details Panel */}
                 {selectedDayData && (
                     <div className="space-y-4 animate-fade-in">
-                        {/* Attendance Summary */}
-                        <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-sm transition-colors duration-300">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-bold text-gray-900 dark:text-white text-lg">
-                                    {monthNames[currentDate.getMonth()]} {selectedDay}, {currentDate.getFullYear()}
-                                </h3>
-                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${selectedDayData.attendance.status === 'present' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                    selectedDayData.attendance.status === 'half-day' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
-                                        'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                                    }`}>
+                        <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-soft border border-gray-100 dark:border-slate-700/60">
+                            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100 dark:border-slate-700/60">
+                                <div>
+                                    <h3 className="font-extrabold text-sm text-ink-navy dark:text-white leading-none">
+                                        {monthNames[currentDate.getMonth()]} {selectedDay}, {currentDate.getFullYear()}
+                                    </h3>
+                                    <span className="text-[9px] text-slate-gray font-bold uppercase tracking-wider mt-1 block">Attendance Status</span>
+                                </div>
+                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                    selectedDayData.attendance.status === 'present' 
+                                        ? 'bg-emerald-100 text-emerald-600' 
+                                        : selectedDayData.attendance.status === 'half-day' 
+                                            ? 'bg-amber-100 text-amber-600' 
+                                            : 'bg-red-100 text-alert-red'
+                                }`}>
                                     {selectedDayData.attendance.status === 'present' ? 'Full Day' :
                                         selectedDayData.attendance.status === 'half-day' ? 'Half Day' : 'Absent'}
                                 </span>
                             </div>
 
                             {selectedDayData.attendance.status !== 'absent' && (
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div>
-                                        <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">Login</p>
-                                        <p className="text-gray-900 dark:text-white font-semibold">{selectedDayData.attendance.loginTime}</p>
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                    <div className="p-2 bg-[#F7F9FC] dark:bg-slate-750 rounded-xl">
+                                        <span className="text-[9px] text-slate-gray font-bold uppercase tracking-wider block mb-0.5">Login</span>
+                                        <span className="text-xs font-bold text-ink-navy dark:text-white font-data">{selectedDayData.attendance.loginTime}</span>
                                     </div>
-                                    <div>
-                                        <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">Logout</p>
-                                        <p className="text-gray-900 dark:text-white font-semibold">{selectedDayData.attendance.logoutTime}</p>
+                                    <div className="p-2 bg-[#F7F9FC] dark:bg-slate-750 rounded-xl">
+                                        <span className="text-[9px] text-slate-gray font-bold uppercase tracking-wider block mb-0.5">Logout</span>
+                                        <span className="text-xs font-bold text-ink-navy dark:text-white font-data">{selectedDayData.attendance.logoutTime}</span>
                                     </div>
-                                    <div>
-                                        <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">Total</p>
-                                        <p className="text-gray-900 dark:text-white font-semibold">
+                                    <div className="p-2 bg-[#F7F9FC] dark:bg-slate-750 rounded-xl">
+                                        <span className="text-[9px] text-slate-gray font-bold uppercase tracking-wider block mb-0.5">Total</span>
+                                        <span className="text-xs font-bold text-ink-navy dark:text-white font-data">
                                             {Math.floor(selectedDayData.attendance.totalHours)}h {Math.round((selectedDayData.attendance.totalHours % 1) * 60)}m
-                                        </p>
+                                        </span>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Activity Timeline */}
+                        {/* Activities timeline */}
                         {selectedDayData.activities.length > 0 && (
-                            <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-sm transition-colors duration-300">
-                                <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4">Activity Timeline</h3>
-                                <div className="space-y-3">
+                            <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-soft border border-gray-100 dark:border-slate-700/60">
+                                <h3 className="font-extrabold text-sm text-ink-navy dark:text-white mb-5 uppercase tracking-wider">Activity Log</h3>
+                                <div className="space-y-4 relative">
                                     {selectedDayData.activities.map((activity, index) => (
-                                        <div key={activity.id} className="flex gap-4">
-                                            <div className="flex flex-col items-center">
-                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${getActivityColor(activity.type)}`}>
+                                        <div key={activity.id} className="flex gap-4 items-start relative">
+                                            <div className="flex flex-col items-center z-10 shrink-0">
+                                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${getActivityColor(activity.type)}`}>
                                                     {getActivityIcon(activity.type)}
                                                 </div>
                                                 {index < selectedDayData.activities.length - 1 && (
-                                                    <div className="w-0.5 h-8 bg-gray-200 dark:bg-slate-700 my-1" />
+                                                    <div className="w-0.5 h-10 bg-gray-150 dark:bg-slate-700 my-1" />
                                                 )}
                                             </div>
-                                            <div className="flex-1 pb-2">
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="font-semibold text-gray-900 dark:text-white text-sm">
+                                            <div className="flex-1 pb-1">
+                                                <div className="flex items-center justify-between mb-1.5">
+                                                    <span className="font-bold text-xs text-ink-navy dark:text-white">
                                                         {getActivityLabel(activity.type)}
                                                     </span>
-                                                    <span className="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1">
-                                                        <Clock className="w-3 h-3" />
+                                                    <span className="text-slate-gray dark:text-gray-400 text-[9px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                                        <Clock className="w-3 h-3 text-electric-blue" />
                                                         {activity.time}
                                                     </span>
                                                 </div>
-                                                <p className="text-gray-600 dark:text-gray-300 text-sm">{activity.description}</p>
+                                                <p className="text-slate-gray dark:text-gray-300 text-xs font-semibold leading-relaxed">{activity.description}</p>
                                                 {activity.location && (
-                                                    <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 flex items-center gap-1">
+                                                    <div className="mt-1.5 flex items-center gap-1 text-[9px] font-bold text-electric-blue uppercase">
                                                         <MapPin className="w-3 h-3" />
                                                         {activity.location}
-                                                    </p>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
@@ -372,12 +381,12 @@ const CalendarScreen = () => {
                     </div>
                 )}
 
-                {/* Empty State */}
+                {/* Empty State Banner */}
                 {!selectedDay && (
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm text-center transition-colors duration-300">
-                        <CalendarIcon className="w-16 h-16 text-gray-300 dark:text-slate-600 mx-auto mb-3" />
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
-                            Tap any day to view attendance details and activity timeline
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-soft border border-gray-100 dark:border-slate-700/60 text-center">
+                        <CalendarIcon className="w-12 h-12 text-slate-gray/30 mx-auto mb-3" />
+                        <p className="text-slate-gray dark:text-gray-400 text-xs font-bold uppercase tracking-wider">
+                            Select a calendar date to view telemetry history
                         </p>
                     </div>
                 )}

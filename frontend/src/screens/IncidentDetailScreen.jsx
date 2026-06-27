@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Download, Share2, MapPin, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
 
+import sharpObjects from '../assets/images/sharp_objects.png';
+
 const IncidentDetailScreen = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -11,7 +13,7 @@ const IncidentDetailScreen = () => {
         date: 'Today, 10:32 AM',
         riskLevel: 'High',
         status: 'Active',
-        image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop',
+        image: sharpObjects,
     };
 
     const incidentData = {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
-    BarChart2, Map as MapIcon, Users, Bell, Settings,
-    Search, Menu, LogOut, Shield, ChevronDown, User, Moon, Sun
+    BarChart2, Map as MapIcon, Users, Bell, LogOut, Search, ChevronDown, User, Moon, Sun
 } from 'lucide-react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -23,24 +22,24 @@ const SupervisorDashboard = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/login/supervisor'); // Provide explicit path
+        navigate('/login/supervisor');
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-screen bg-neutral-50 dark:bg-slate-900 overflow-hidden font-sans text-neutral-900 dark:text-gray-100 transition-colors duration-300">
-            {/* Sidebar */}
-            <aside className="w-full md:w-64 bg-white dark:bg-slate-800 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700 flex flex-row md:flex-col z-20 shadow-sm flex-shrink-0 overflow-x-auto md:overflow-visible transition-colors duration-300">
-                <div className="p-4 md:p-6 flex items-center gap-3 min-w-fit">
-                    <div className="w-10 h-10 flex items-center justify-center">
-                        <Logo size={40} />
+        <div className="flex flex-col md:flex-row h-screen bg-sky-white overflow-hidden font-body text-ink-navy transition-colors duration-300">
+            {/* Sidebar - Electric Blue background with Vivid Cyan active highlights */}
+            <aside className="w-full md:w-64 bg-electric-blue text-white flex flex-row md:flex-col z-20 shadow-lg flex-shrink-0 overflow-x-auto md:overflow-visible transition-all duration-300">
+                <div className="p-4 md:p-6 flex items-center gap-3 min-w-fit border-b border-white/10">
+                    <div className="w-10 h-10 flex items-center justify-center bg-white/10 rounded-xl p-1.5">
+                        <Logo size={36} />
                     </div>
                     <div className="hidden md:block">
-                        <h1 className="font-bold text-lg leading-tight text-gray-900 dark:text-white">CivicMind</h1>
-                        <p className="text-xs text-gray-400">Supervisor Portal</p>
+                        <h1 className="font-extrabold text-lg leading-none font-display text-white">CivicMind</h1>
+                        <p className="text-[10px] font-bold tracking-wider text-blue-200 uppercase mt-1">Supervisor Portal</p>
                     </div>
                 </div>
 
-                <nav className="flex-1 flex flex-row md:flex-col gap-2 p-2 md:px-4 md:space-y-2 md:mt-4 overflow-x-auto md:overflow-visible">
+                <nav className="flex-1 flex flex-row md:flex-col gap-2 p-2 md:p-4 md:space-y-2 md:mt-4 overflow-x-auto md:overflow-visible">
                     {[
                         { id: 'overview', icon: MapIcon, label: 'Overview' },
                         { id: 'workers', icon: Users, label: 'Workers' },
@@ -50,41 +49,41 @@ const SupervisorDashboard = () => {
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl transition-colors font-medium text-xs md:text-sm whitespace-nowrap ${activeTab === item.id
-                                ? 'bg-black dark:bg-white text-white dark:text-black shadow-soft'
-                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700'
+                            className={`flex items-center gap-2 md:gap-3 px-4 py-3 rounded-full transition-all duration-200 text-xs md:text-sm font-bold whitespace-nowrap ${activeTab === item.id
+                                ? 'bg-vivid-cyan text-ink-navy shadow-md scale-[1.02]'
+                                : 'text-blue-100 hover:bg-white/10 hover:text-white'
                                 }`}
                         >
-                            <item.icon size={16} className="md:w-[18px] md:h-[18px]" />
-                            <span className="md:inline">{item.label}</span>
+                            <item.icon size={18} />
+                            <span>{item.label}</span>
                         </button>
                     ))}
                 </nav>
 
-                <div className="p-2 md:p-4 border-l md:border-l-0 md:border-t border-gray-100 dark:border-gray-700 min-w-fit md:min-w-0">
+                <div className="p-2 md:p-4 border-t border-white/10 min-w-fit md:min-w-0">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 text-gray-400 hover:text-red-500 w-full rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-xs md:text-sm font-medium"
+                        className="flex items-center gap-3 px-4 py-3 text-blue-200 hover:text-white hover:bg-white/5 w-full rounded-full transition-all text-xs md:text-sm font-bold"
                     >
-                        <LogOut size={16} className="md:w-[18px] md:h-[18px]" />
+                        <LogOut size={18} />
                         <span className="hidden md:inline">Logout</span>
                     </button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col relative overflow-hidden bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+            <main className="flex-1 flex flex-col relative overflow-hidden bg-sky-white">
                 {/* Top Header */}
-                <header className="bg-white dark:bg-slate-800 h-auto min-h-[64px] border-b border-gray-100 dark:border-gray-700 flex items-center justify-between px-4 md:px-8 z-10 pt-safe-top pb-2 md:py-0 transition-colors duration-300">
-                    <h2 className="font-bold text-xl capitalize text-gray-900 dark:text-white">{activeTab.replace('-', ' ')}</h2>
+                <header className="bg-white h-16 border-b border-blue-50 flex items-center justify-between px-6 md:px-8 z-10 shrink-0">
+                    <h2 className="font-extrabold text-xl capitalize font-display text-ink-navy">{activeTab.replace('-', ' ')}</h2>
 
                     <div className="flex items-center gap-4">
                         <div className="relative hidden md:block">
-                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-gray" />
                             <input
                                 type="text"
                                 placeholder="Search workers, sites..."
-                                className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-blue/20 w-64 text-gray-900 dark:text-white placeholder-gray-400"
+                                className="pl-10 pr-4 py-2 bg-sky-white rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-electric-blue/20 w-64 text-ink-navy placeholder-slate-gray border border-blue-50"
                             />
                         </div>
 
@@ -92,48 +91,46 @@ const SupervisorDashboard = () => {
                         <div className="relative">
                             <button
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                                className="flex items-center gap-2 p-1 rounded-full hover:bg-sky-white transition-all duration-200"
                             >
-                                <div className="w-10 h-10 bg-gray-200 dark:bg-slate-600 rounded-full overflow-hidden border-2 border-white dark:border-slate-500 shadow-sm">
+                                <div className="w-10 h-10 bg-sky-white rounded-full overflow-hidden border-2 border-white shadow-soft">
                                     <img src="https://i.pravatar.cc/100?img=68" alt="Profile" className="w-full h-full object-cover" />
                                 </div>
-                                <ChevronDown size={16} className="text-gray-500 dark:text-gray-400 hidden md:block" />
+                                <ChevronDown size={16} className="text-slate-gray hidden md:block" />
                             </button>
 
                             {/* Dropdown Menu */}
                             {isProfileOpen && (
-                                <div className="absolute right-0 top-12 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 z-50 animate-in fade-in slide-in-from-top-2">
-                                    <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                                        <p className="font-bold text-sm text-gray-900 dark:text-white">{user?.name || 'Supervisor'}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{user?.district || 'Mumbai City'}</p>
+                                <div className="absolute right-0 top-12 w-56 bg-white rounded-2xl shadow-lg border border-blue-50 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="px-4 py-3 border-b border-blue-50">
+                                        <p className="font-bold text-sm text-ink-navy">{user?.name || 'Supervisor'}</p>
+                                        <p className="text-xs text-slate-gray font-medium">{user?.district || 'Mumbai City'}</p>
                                     </div>
 
                                     <button
-                                        className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors"
-                                        onClick={() => {
-                                            console.log('Navigate to profile edit');
-                                            // navigate('/admin/profile'); 
-                                            // For now just close menu as requested "options of edit profile"
-                                            setIsProfileOpen(false);
-                                        }}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-ink-navy hover:bg-sky-white flex items-center gap-3 transition-all"
+                                        onClick={() => setIsProfileOpen(false)}
                                     >
                                         <User size={16} />
                                         Edit Profile
                                     </button>
 
                                     <button
-                                        onClick={toggleTheme}
-                                        className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors"
+                                        onClick={() => {
+                                            toggleTheme();
+                                            setIsProfileOpen(false);
+                                        }}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-ink-navy hover:bg-sky-white flex items-center gap-3 transition-all"
                                     >
                                         {isDark ? <Sun size={16} /> : <Moon size={16} />}
                                         {isDark ? 'Light Mode' : 'Dark Mode'}
                                     </button>
 
-                                    <div className="h-px bg-gray-100 dark:bg-gray-700 my-1"></div>
+                                    <div className="h-px bg-blue-50 my-1"></div>
 
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 transition-colors"
+                                        className="w-full text-left px-4 py-2.5 text-sm text-alert-red hover:bg-red-50 flex items-center gap-3 transition-all"
                                     >
                                         <LogOut size={16} />
                                         Logout
@@ -144,37 +141,42 @@ const SupervisorDashboard = () => {
                     </div>
                 </header>
 
-                {/* Dashboard Grid */}
+                {/* Dashboard Content Grid */}
                 <div className="flex-1 p-6 overflow-hidden relative">
                     {/* OVERVIEW TAB */}
                     {activeTab === 'overview' && (
                         <div className="flex flex-col lg:flex-row gap-6 h-full">
                             <div className="flex-1 flex flex-col gap-6 overflow-y-auto pb-4 scrollbar-hide">
-                                {/* Metrics Row */}
+                                {/* Metrics Strip with Illustrated Spot Mini-scenes */}
                                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                                     {[
-                                        { label: 'Active Workers', value: '24', trend: '+2', color: 'bg-blue-50 dark:bg-blue-900/20 text-primary-blue dark:text-blue-400' },
-                                        { label: 'Critical Threats', value: '3', trend: '+1', color: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' },
-                                        { label: 'Safe Sites', value: '18', trend: '0', color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' },
-                                        { label: 'Avg Response', value: '4m', trend: '-30s', color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' },
+                                        { label: 'Active Workers', value: '24', trend: '+2', color: 'bg-blue-50 border-blue-100 text-electric-blue', icon: '🪖' },
+                                        { label: 'Critical Threats', value: '3', trend: '+1', color: 'bg-red-50 border-red-100 text-alert-red', icon: '💨' },
+                                        { label: 'Safe Sites', value: '18', trend: '0', color: 'bg-green-50 border-green-100 text-neon-green', icon: '🛡️' },
+                                        { label: 'Avg Response', value: '4m', trend: '-30s', color: 'bg-purple-50 border-purple-100 text-deep-violet', icon: '⚡' },
                                     ].map((stat, i) => (
-                                        <Card key={i} className="!p-5 flex items-center justify-between dark:bg-slate-800 border dark:border-slate-700">
+                                        <Card key={i} className="!p-5 border border-blue-50 shadow-soft bg-white rounded-3xl flex items-center justify-between hover:scale-[1.03] transition-all duration-200 ease-spring relative overflow-hidden">
                                             <div>
-                                                <p className="text-gray-400 text-xs font-semibold uppercase">{stat.label}</p>
-                                                <h3 className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">{stat.value}</h3>
+                                                <p className="text-slate-gray text-[10px] font-extrabold uppercase tracking-wider">{stat.label}</p>
+                                                <h3 className="text-3xl font-extrabold font-data mt-1 text-ink-navy">{stat.value}</h3>
                                             </div>
-                                            <div className={`px-2 py-1 rounded-full text-xs font-bold ${stat.color}`}>
-                                                {stat.trend}
+                                            <div className="flex flex-col items-end gap-2">
+                                                <div className="w-10 h-10 bg-sky-white rounded-xl flex items-center justify-center text-2xl shadow-inner">
+                                                    {stat.icon}
+                                                </div>
+                                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${stat.color}`}>
+                                                    {stat.trend}
+                                                </span>
                                             </div>
                                         </Card>
                                     ))}
                                 </div>
 
-                                {/* Main Visuals Grid */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[400px]">
-                                    {/* High Risk Map (Heatmap simulated) */}
+                                {/* Main Visuals Map & Chart Grid */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[380px]">
+                                    {/* High Risk Map (Dark Matter Tile Layer) */}
                                     <MapPanel
-                                        className="rounded-3xl overflow-hidden shadow-sm"
+                                        className="rounded-3xl overflow-hidden shadow-soft border border-blue-50"
                                         district={user?.district}
                                     />
 
@@ -182,15 +184,16 @@ const SupervisorDashboard = () => {
                                     <HazardTimeline />
                                 </div>
 
-                                {/* Secondary Table */}
+                                {/* Active Personnel Table */}
                                 <div className="flex-1">
-                                    <h3 className="font-bold mb-4 text-lg text-gray-900 dark:text-white">Active Personnel</h3>
-                                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
+                                    <h3 className="font-extrabold text-lg mb-4 font-display text-ink-navy">Active Personnel</h3>
+                                    <div className="bg-white rounded-3xl shadow-soft border border-blue-50 overflow-hidden">
                                         <WorkerTable district={user?.district} />
                                     </div>
                                 </div>
                             </div>
-                            {/* Right Panel (Alerts Feed) */}
+                            
+                            {/* Alerts Timeline Sidebar */}
                             <div className="w-full lg:w-80 flex flex-col gap-4">
                                 <AlertsPanel district={user?.district} />
                             </div>
@@ -201,10 +204,10 @@ const SupervisorDashboard = () => {
                     {activeTab === 'workers' && (
                         <div className="h-full flex flex-col">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-bold text-xl text-gray-900 dark:text-white">Worker Management</h3>
-                                <Button className="!bg-primary-blue">+ Add Worker</Button>
+                                <h3 className="font-extrabold text-xl font-display text-ink-navy">Worker Management</h3>
+                                <Button className="!bg-electric-blue rounded-full px-6 py-3 font-bold">+ Add Worker</Button>
                             </div>
-                            <div className="flex-1 overflow-auto bg-white dark:bg-slate-800 rounded-3xl shadow-sm p-6 border border-gray-100 dark:border-slate-700">
+                            <div className="flex-1 overflow-auto bg-white rounded-3xl shadow-soft p-6 border border-blue-50">
                                 <WorkerTable limit={50} district={user?.district} />
                             </div>
                         </div>
@@ -212,18 +215,20 @@ const SupervisorDashboard = () => {
 
                     {/* ANALYTICS TAB */}
                     {activeTab === 'analytics' && (
-                        <div className="h-full flex items-center justify-center flex-col text-gray-400">
-                            <BarChart2 size={64} className="mb-4 opacity-50" />
-                            <h3 className="text-xl font-bold">Analytics Module</h3>
-                            <p>Detailed safety reports and trends coming soon.</p>
+                        <div className="h-full flex items-center justify-center flex-col text-slate-gray">
+                            <div className="w-24 h-24 bg-sky-white rounded-full flex items-center justify-center text-4xl mb-4 shadow-soft">
+                                📊
+                            </div>
+                            <h3 className="text-xl font-extrabold font-display text-ink-navy">Analytics Hub</h3>
+                            <p className="text-sm font-medium mt-1">Detailed safety reports and trends coming soon.</p>
                         </div>
                     )}
 
                     {/* ALERTS TAB */}
                     {activeTab === 'alerts' && (
                         <div className="h-full flex gap-6">
-                            <div className="flex-1 bg-white dark:bg-slate-800 rounded-3xl shadow-sm p-6 overflow-auto border border-gray-100 dark:border-slate-700">
-                                <h3 className="font-bold text-lg mb-4 text-gray-900 dark:text-white">All System Alerts</h3>
+                            <div className="flex-1 bg-white rounded-3xl shadow-soft p-6 overflow-auto border border-blue-50">
+                                <h3 className="font-extrabold text-lg mb-4 font-display text-ink-navy">System Alerts Register</h3>
                                 <AlertsPanel limit={20} district={user?.district} />
                             </div>
                         </div>

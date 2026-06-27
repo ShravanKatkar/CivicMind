@@ -58,13 +58,13 @@ const VoiceReportingScreen = () => {
         try {
             const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
             const result = await sendVoiceCommand(audioBlob);
-            navigate('/danger-detail', { state: { assessment: result } });
+            navigate('/danger-detail', { state: { assessmentResult: result } });
         } catch (err) {
             console.error('Voice processing failed', err);
             // Mock navigation for demo
             navigate('/danger-detail', {
                 state: {
-                    assessment: {
+                    assessmentResult: {
                         transcription,
                         vision_analysis: { dangers_detected: ['Sharp Objects', 'Gas Risk'] },
                         risk_assessment: {

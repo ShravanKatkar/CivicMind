@@ -87,36 +87,68 @@ const AlertsPanel = ({ district }) => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2 scrollbar-hide space-y-2">
-                    {alerts.map(alert => (
-                        <div
-                            key={alert.id}
-                            onClick={() => setSelectedAlert(alert)}
-                            className={`p-3 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group border ${selectedAlert?.id === alert.id
-                                ? 'border-blue-300 bg-blue-50/30'
-                                : 'border-transparent hover:border-gray-100'
-                                }`}
-                        >
-                            <div className="flex justify-between items-start mb-2">
-                                <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide ${alert.color}`}>
-                                    {alert.type}
-                                </span>
-                                <div className="flex items-center text-gray-400 text-xs gap-1">
-                                    <Clock size={10} />
-                                    {alert.time}
+                    {alerts.map(alert => {
+                        const alertIcon = (() => {
+                            const msg = alert.message.toLowerCase();
+                            if (msg.includes('scaffold') || msg.includes('fall') || msg.includes('safety') || msg.includes('gear') || msg.includes('helmet')) return '🪖';
+                            if (msg.includes('electric') || msg.includes('wire') || msg.includes('exposed')) return '⚡';
+                            if (msg.includes('gas') || msg.includes('toxic') || msg.includes('leak') || msg.includes('chemical')) return '💨';
+                            if (msg.includes('manhole') || msg.includes('open') || msg.includes('sewer') || msg.includes('hole')) return '🕳️';
+                            return '⚠️';
+                        })();
+
+                        let borderClass = 'border-l-4 border-l-vivid-cyan';
+                        let badgeColor = 'bg-sky-white text-vivid-cyan border border-vivid-cyan/10';
+                        if (alert.type === 'Critical') {
+                            borderClass = 'border-l-4 border-l-alert-red';
+                            badgeColor = 'bg-[#FEE2E2] text-alert-red border border-red-200';
+                        } else if (alert.type === 'Warning') {
+                            borderClass = 'border-l-4 border-l-blazing-amber';
+                            badgeColor = 'bg-[#FEF3C7] text-blazing-amber border border-amber-200';
+                        }
+
+                        return (
+                            <div
+                                key={alert.id}
+                                onClick={() => setSelectedAlert(alert)}
+                                className={`p-4 bg-white dark:bg-slate-800 rounded-2xl hover:bg-sky-white dark:hover:bg-slate-700/60 transition-all duration-200 cursor-pointer group border border-transparent shadow-sm flex items-start gap-3 relative overflow-hidden ${borderClass} ${selectedAlert?.id === alert.id
+                                    ? 'ring-2 ring-electric-blue/30 bg-sky-white/50'
+                                    : ''
+                                    }`}
+                            >
+                                {/* Spot Illustration */}
+                                <div className="w-10 h-10 bg-sky-white dark:bg-slate-700 rounded-xl flex items-center justify-center text-xl shrink-0">
+                                    {alertIcon}
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-center mb-1 gap-2">
+                                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${badgeColor}`}>
+                                            {alert.type}
+                                        </span>
+                                        <span className="text-[10px] text-slate-gray dark:text-gray-400 font-semibold shrink-0">
+                                            {alert.time}
+                                        </span>
+                                    </div>
+                                    <h4 className="font-bold text-xs text-ink-navy dark:text-white leading-snug mb-1 truncate">
+                                        {alert.message}
+                                    </h4>
+                                    <p className="text-[11px] font-semibold text-slate-gray dark:text-gray-400 mb-1">
+                                        Worker: <span className="text-ink-navy dark:text-white font-bold">{alert.workerName}</span>
+                                    </p>
+                                    <p className="text-[10px] text-slate-gray dark:text-gray-400 flex items-center justify-between">
+                                        <span>{alert.location}</span>
+                                        {alert.status === 'pending' ? (
+                                            <span className="text-blazing-amber font-bold text-[9px] uppercase tracking-wider bg-amber-50 dark:bg-amber-900/10 px-1.5 py-0.5 rounded-md">Pending</span>
+                                        ) : (
+                                            <span className="text-neon-green font-bold text-[9px] uppercase tracking-wider bg-green-50 dark:bg-green-900/10 px-1.5 py-0.5 rounded-md">Resolved</span>
+                                        )}
+                                    </p>
                                 </div>
                             </div>
-                            <h4 className="font-bold text-sm mb-1 text-gray-800">{alert.message}</h4>
-                            <p className="text-xs text-gray-600 mb-1">Worker: {alert.workerName}</p>
-                            <p className="text-xs text-gray-500 flex items-center justify-between">
-                                {alert.location}
-                                {alert.status === 'pending' ? (
-                                    <span className="text-amber-600 font-semibold text-[10px]">Awaiting Response</span>
-                                ) : (
-                                    <CheckCircle size={12} className="text-green-500" />
-                                )}
-                            </p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="p-3 border-t border-gray-50 bg-gray-50/50">

@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Filter, AlertTriangle, CheckCircle, Clock, ChevronRight } from 'lucide-react';
 
+import sharpObjects from '../assets/images/sharp_objects.png';
+import openDrain from '../assets/images/open_drain.png';
+import dirtyWater from '../assets/images/dirty_water.png';
+
 const ReportsScreen = () => {
     const navigate = useNavigate();
     const [filterBy, setFilterBy] = useState('All');
@@ -16,7 +20,7 @@ const ReportsScreen = () => {
             date: 'Today, 10:32 AM',
             riskLevel: 'High',
             status: 'Active',
-            image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop',
+            image: sharpObjects,
         },
         {
             id: 2,
@@ -25,7 +29,7 @@ const ReportsScreen = () => {
             date: 'Yesterday, 3:15 PM',
             riskLevel: 'Medium',
             status: 'Resolved',
-            image: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=300&fit=crop',
+            image: openDrain,
         },
         {
             id: 3,
@@ -34,7 +38,7 @@ const ReportsScreen = () => {
             date: '2 days ago, 11:20 AM',
             riskLevel: 'Low',
             status: 'Monitoring',
-            image: 'https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=400&h=300&fit=crop',
+            image: dirtyWater,
         },
     ];
 

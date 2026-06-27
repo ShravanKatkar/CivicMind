@@ -9,12 +9,12 @@ const SplashScreen = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            // Redirect to language selection if not selected, otherwise go to role selection
-            navigate(isLanguageSelected ? '/roles' : '/language');
+            // Redirect to Welcome onboarding flow
+            navigate('/welcome');
         }, 2500);
 
         return () => clearTimeout(timer);
-    }, [navigate, isLanguageSelected]);
+    }, [navigate]);
 
     return (
         <div

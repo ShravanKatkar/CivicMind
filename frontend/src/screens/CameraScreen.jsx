@@ -62,12 +62,12 @@ const CameraScreen = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 relative flex flex-col">
+        <div className="min-h-screen bg-sky-white relative flex flex-col justify-between overflow-hidden font-body">
             {/* Header */}
             <div className="absolute top-0 left-0 right-0 z-20 p-6 flex justify-between items-center">
                 <button
                     onClick={() => navigate(-1)}
-                    className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                    className="w-12 h-12 bg-white/80 hover:bg-white shadow-soft rounded-full flex items-center justify-center text-ink-navy transition-all duration-200 active:scale-90"
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </button>
@@ -75,73 +75,89 @@ const CameraScreen = () => {
                 {capturedImage && (
                     <button
                         onClick={handleRetake}
-                        className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                        className="w-12 h-12 bg-white/80 hover:bg-white shadow-soft rounded-full flex items-center justify-center text-ink-navy transition-all duration-200 active:scale-90"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 )}
             </div>
 
-            {/* Camera View / Image Preview */}
-            <div className="flex-1 relative bg-black flex items-center justify-center">
+            {/* Viewfinder / Image Preview */}
+            <div className="flex-1 flex items-center justify-center p-6 relative">
                 {capturedImage ? (
-                    <img
-                        src={capturedImage}
-                        alt="Captured"
-                        className="w-full h-full object-contain"
-                    />
-                ) : (
-                    <div className="text-center">
-                        <div className="w-32 h-32 mx-auto mb-4 border-4 border-white/30 border-dashed rounded-full flex items-center justify-center">
-                            <Camera className="w-16 h-16 text-white/50" />
-                        </div>
-                        <p className="text-white/70 text-sm font-medium">
-                            Tap button below to capture
-                        </p>
+                    <div className="w-full max-w-sm h-[50vh] rounded-3xl overflow-hidden shadow-soft border-4 border-white bg-white relative">
+                        <img
+                            src={capturedImage}
+                            alt="Captured"
+                            className="w-full h-full object-cover"
+                        />
                     </div>
-                )}
+                ) : (
+                    <div className="flex flex-col items-center gap-6">
+                        {/* Viewfinder with Brackets & Scan Line */}
+                        <div className="relative w-80 h-80 bg-white/50 backdrop-blur-sm rounded-[32px] overflow-hidden flex items-center justify-center shadow-soft border-2 border-white">
+                            {/* Illustrated Brackets */}
+                            <div className="absolute top-6 left-6 w-10 h-10 border-t-8 border-l-8 border-electric-blue rounded-tl-2xl"></div>
+                            <div className="absolute top-6 right-6 w-10 h-10 border-t-8 border-r-8 border-electric-blue rounded-tr-2xl"></div>
+                            <div className="absolute bottom-6 left-6 w-10 h-10 border-b-8 border-l-8 border-electric-blue rounded-bl-2xl"></div>
+                            <div className="absolute bottom-6 right-6 w-10 h-10 border-b-8 border-r-8 border-electric-blue rounded-br-2xl"></div>
+                            
+                            {/* Scanning beam */}
+                            <div className="absolute left-6 right-6 h-1.5 bg-gradient-to-r from-transparent via-vivid-cyan to-transparent shadow-[0_0_12px_#06B6D4] animate-scan rounded-full"></div>
 
-                {/* Grid Overlay for camera */}
-                {!capturedImage && (
-                    <div className="absolute inset-0 pointer-events-none">
-                        <div className="absolute inset-x-0 top-1/3 h-px bg-white/10"></div>
-                        <div className="absolute inset-x-0 top-2/3 h-px bg-white/10"></div>
-                        <div className="absolute inset-y-0 left-1/3 w-px bg-white/10"></div>
-                        <div className="absolute inset-y-0 left-2/3 w-px bg-white/10"></div>
+                            {/* Center illustrated target */}
+                            <div className="text-center p-6 pointer-events-none select-none flex flex-col items-center">
+                                <div className="w-20 h-20 bg-sky-white rounded-full flex items-center justify-center mb-3 shadow-inner">
+                                    <Camera className="w-10 h-10 text-electric-blue" />
+                                </div>
+                                <span className="text-xs font-bold text-slate-gray tracking-wider uppercase">AI Hazard Scan</span>
+                            </div>
+                        </div>
+                        <p className="text-slate-gray text-sm font-medium text-center max-w-xs leading-relaxed">
+                            Position the safety hazard within the brackets. CivicMind AI will automatically assess risks.
+                        </p>
                     </div>
                 )}
             </div>
 
-            {/* Bottom Controls */}
-            <div
-                className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 pt-6 rounded-t-[32px]"
-                style={{
-                    background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%)',
-                }}
-            >
+            {/* Bottom Controls Sheet */}
+            <div className="bg-white/90 backdrop-blur-md rounded-t-[32px] border-t border-blue-50 shadow-[0_-8px_30px_rgba(37,99,235,0.06)] p-6 z-10 w-full max-w-md mx-auto">
                 {!capturedImage ? (
-                    <div className="flex items-center justify-center gap-8">
-                        {/* Capture Button */}
+                    <div className="space-y-4">
+                        {/* Last scan peek summary */}
+                        <div className="bg-sky-white rounded-2xl p-4 flex items-center justify-between border border-blue-50">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-electric-blue/10 rounded-xl flex items-center justify-center text-lg">
+                                    🪖
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-slate-gray font-bold uppercase tracking-wider block">Last Scan Result</span>
+                                    <h4 className="font-bold text-ink-navy text-sm">Site B - Scaffolding</h4>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 bg-[#FEE2E2] px-3 py-1.5 rounded-xl border border-red-100">
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-alert-red opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-alert-red"></span>
+                                </span>
+                                <span className="font-data font-bold text-alert-red text-xs">8.2 HIGH</span>
+                            </div>
+                        </div>
+
+                        {/* Capture CTA */}
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
                                 fileInputRef.current?.click();
                             }}
-                            className="relative"
+                            className="w-full bg-gradient-to-r from-electric-blue to-vivid-cyan hover:opacity-95 text-white font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all duration-200 ease-spring"
+                            style={{
+                                boxShadow: '0 8px 20px -4px rgba(37, 99, 235, 0.4)',
+                            }}
                         >
-                            <div className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center">
-                                <div className="w-16 h-16 rounded-full bg-white"></div>
-                            </div>
-                        </button>
-
-                        {/* Hidden Gallery Button */}
-                        <button className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white hover:bg-white/30 transition-colors">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="2" />
-                                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
-                                <path d="m21 15-5-5L5 21" strokeWidth="2" />
-
-                            </svg>
+                            <Camera className="w-5 h-5" />
+                            Scan Hazard
                         </button>
                     </div>
                 ) : (
@@ -150,15 +166,15 @@ const CameraScreen = () => {
                         <button
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-base py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 hover:shadow-xl transition-all active:scale-95 disabled:opacity-50"
+                            className="w-full bg-gradient-to-r from-electric-blue to-vivid-cyan text-white font-bold text-base py-4.5 rounded-full shadow-lg flex items-center justify-center gap-2 hover:opacity-95 transition-all active:scale-95 disabled:opacity-50"
                             style={{
-                                boxShadow: '0 10px 30px rgba(99, 102, 241, 0.4)',
+                                boxShadow: '0 8px 20px -4px rgba(37, 99, 235, 0.4)',
                             }}
                         >
                             {loading ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    Analyzing...
+                                    Analyzing Risks...
                                 </>
                             ) : (
                                 <>
@@ -171,7 +187,7 @@ const CameraScreen = () => {
                         {/* Retake Button */}
                         <button
                             onClick={handleRetake}
-                            className="w-full bg-white/20 backdrop-blur-md text-white font-semibold text-base py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-white/30 transition-all"
+                            className="w-full bg-sky-white border border-electric-blue/15 text-electric-blue hover:bg-blue-50 font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
                         >
                             <RotateCw className="w-5 h-5" />
                             Retake Photo

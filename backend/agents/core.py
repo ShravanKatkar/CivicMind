@@ -175,7 +175,8 @@ class CoordinatorAgent:
                     "hazards_detected": risk_assessment.get("hazards_detected", []),
                     "description": "Voice Report Analysis"
                 },
-                "risk_assessment": risk_assessment
+                "risk_assessment": risk_assessment,
+                "action": risk_assessment.get("action", "report_hazard")
             }
             
         except Exception as e:

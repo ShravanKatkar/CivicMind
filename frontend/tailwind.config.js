@@ -5,42 +5,70 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Professional Government Palette
+                // CivicMind AI v2.0 - Vivid & High Energy Palette
+                'sky-white': '#F0F7FF',
+                'electric-blue': '#2563EB',
+                'vivid-cyan': '#06B6D4',
+                'neon-green': '#10B981',
+                'blazing-amber': '#F59E0B',
+                'alert-red': '#EF4444',
+                'deep-violet': '#7C3AED',
+                'sunrise-orange': '#F97316',
+                'ink-navy': '#0F172A',
+                'slate-gray': '#64748B',
+                
+                // Keep compatibility references if needed
                 gov: {
-                    // Earthy Professional Palette
-                    // Primary - Forest Fern
-                    navy: '#327039',      // Main Green (was Navy)
-                    'navy-dark': '#133020', // Dark Green/Earth (was Dark Navy)
-                    'navy-light': '#327039', // Keeping consistent (was Light Blue) - using Forest Fern
-
-                    // Safety & Status Colors
-                    'safety-green': '#327039', // Forest Fern
-                    'warning-amber': '#F0BE49', // Wheat Field Sunrise
-                    'danger-red': '#DD5C36',    // Cherry Grove
-
-                    // Neutral Professional Tones
-                    'slate': '#0f172a',        // Slate 900
-                    'slate-light': '#334155',  // Slate 700
-                    'gray-bg': '#F8EDD9',      // Alabaster Hay (Background)
+                    navy: '#2563EB',
+                    'navy-dark': '#0F172A',
+                    'navy-light': '#2563EB',
+                    'safety-green': '#10B981',
+                    'warning-amber': '#F59E0B',
+                    'danger-red': '#EF4444',
+                    'slate': '#0F172A',
+                    'slate-light': '#64748B',
+                    'gray-bg': '#F0F7FF',
                     'white': '#FFFFFF',
-
-                    // Accent
-                    'accent-teal': '#F0BE49',  // Wheat Field Sunrise
-                },
-                // Global Overrides for Earthy Theme
-                'gray-50': '#F8EDD9',   // Alabaster Hay (Light Mode BG)
-                // Removed green overrides, letting Tailwind defaults take over or ensuring we use grays
-                // 'slate-800': '#327039', // Forest Fern (Dark Mode Card BG) <- REMOVED
-                // 'slate-900': '#133020', // Tilled Earth (Dark Mode Main BG) <- REMOVED
+                    'accent-teal': '#06B6D4',
+                }
+            },
+            fontFamily: {
+                display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                body: ['Inter', 'sans-serif'],
+                data: ['"Space Grotesk"', 'monospace'],
             },
             borderRadius: {
-                '3xl': '24px',
+                '3xl': '20px', // Standardized to 20px card radius
                 '4xl': '32px',
             },
             boxShadow: {
-                'soft': '0 4px 20px rgba(0, 0, 0, 0.08)',
-                'card': '0 2px 12px rgba(0, 0, 0, 0.06)',
-                'professional': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                'soft': '0 4px 24px rgba(37, 99, 235, 0.10)', // Card soft shadow
+                'card': '0 4px 24px rgba(37, 99, 235, 0.10)',
+                'professional': '0 1px 3px rgba(15, 23, 42, 0.08)',
+            },
+            transitionTimingFunction: {
+                'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+            },
+            animation: {
+                'bounce-once': 'bounceOnce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                'scan': 'scanLine 3s linear infinite',
+                'shimmer': 'shimmer 2s linear infinite',
+            },
+            keyframes: {
+                bounceOnce: {
+                    '0%': { transform: 'translateY(-25%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+                    '50%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
+                    '75%': { transform: 'translateY(-10%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+                    '100%': { transform: 'translateY(0)' },
+                },
+                scanLine: {
+                    '0%, 100%': { top: '0%' },
+                    '50%': { top: '100%' },
+                },
+                shimmer: {
+                    '0%': { backgroundPosition: '-200% 0' },
+                    '100%': { backgroundPosition: '200% 0' },
+                }
             }
         },
     },

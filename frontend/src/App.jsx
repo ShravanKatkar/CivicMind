@@ -15,6 +15,7 @@ import LoginScreen from './screens/LoginScreen';
 import RoleSelectionScreen from './screens/RoleSelectionScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import SplashScreen from './screens/SplashScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
 import LanguageSelectionScreen from './screens/LanguageSelectionScreen';
 import ReportsScreen from './screens/ReportsScreen';
 import IncidentDetailScreen from './screens/IncidentDetailScreen';
@@ -31,8 +32,9 @@ function App() {
           <SafetyProvider>
             <BrowserRouter>
               <Routes>
-                {/* Entry Flow - Splash → Language → Role Selection → Auth */}
+                {/* Entry Flow - Splash → Welcome → Language → Role Selection → Auth */}
                 <Route path="/" element={<SplashScreen />} />
+                <Route path="/welcome" element={<WelcomeScreen />} />
                 <Route path="/language" element={<LanguageSelectionScreen />} />
                 <Route path="/roles" element={<RoleSelectionScreen />} />
                 <Route path="/register" element={<RegistrationScreen />} />
