@@ -29,19 +29,17 @@ api.interceptors.request.use(
 );
 
 // ===== Auth API =====
-// Districts are static data — no backend call needed
+// Districts are static data — exact names must match backend/models/districts.py
 export const getDistricts = async () => {
     return {
         districts: [
-            'Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik',
-            'Aurangabad', 'Solapur', 'Kolhapur', 'Amravati',
-            'Navi Mumbai', 'Pimpri-Chinchwad', 'Vasai-Virar',
-            'Malegaon', 'Dhule', 'Ahmednagar', 'Latur',
-            'Ratnagiri', 'Satara', 'Sangli', 'Jalgaon',
-            'Akola', 'Yavatmal', 'Nanded', 'Osmanabad',
-            'Parbhani', 'Hingoli', 'Beed', 'Wardha',
-            'Chandrapur', 'Gadchiroli', 'Gondia', 'Bhandara',
-            'Raigad', 'Sindhudurg', 'Buldhana', 'Washim'
+            'Mumbai City', 'Mumbai Suburban', 'Thane', 'Raigad', 'Palghar',
+            'Pune', 'Ahmednagar', 'Solapur', 'Satara', 'Sangli',
+            'Kolhapur', 'Ratnagiri', 'Sindhudurg', 'Nashik', 'Dhule',
+            'Nandurbar', 'Jalgaon', 'Aurangabad', 'Jalna', 'Beed',
+            'Latur', 'Osmanabad', 'Parbhani', 'Hingoli', 'Nanded',
+            'Nagpur', 'Wardha', 'Bhandara', 'Gondia', 'Chandrapur',
+            'Gadchiroli', 'Amravati', 'Akola', 'Washim', 'Buldhana', 'Yavatmal'
         ]
     };
 };

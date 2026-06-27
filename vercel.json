@@ -1,8 +1,10 @@
 {
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
+  "env": {
+    "VITE_API_URL": "https://shravan001-civicmind-backend.hf.space"
+  },
   "rewrites": [
-    { "source": "/assets/(.*)", "destination": "/assets/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
