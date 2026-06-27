@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://shravan001-civicmind-backend.hf.space';
 
 console.log('API Configuration:', {
     VITE_API_URL: import.meta.env.VITE_API_URL,
@@ -29,14 +29,21 @@ api.interceptors.request.use(
 );
 
 // ===== Auth API =====
+// Districts are static data — no backend call needed
 export const getDistricts = async () => {
-    try {
-        const response = await api.get('/api/auth/districts');
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching districts:', error);
-        throw error;
-    }
+    return {
+        districts: [
+            'Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik',
+            'Aurangabad', 'Solapur', 'Kolhapur', 'Amravati',
+            'Navi Mumbai', 'Pimpri-Chinchwad', 'Vasai-Virar',
+            'Malegaon', 'Dhule', 'Ahmednagar', 'Latur',
+            'Ratnagiri', 'Satara', 'Sangli', 'Jalgaon',
+            'Akola', 'Yavatmal', 'Nanded', 'Osmanabad',
+            'Parbhani', 'Hingoli', 'Beed', 'Wardha',
+            'Chandrapur', 'Gadchiroli', 'Gondia', 'Bhandara',
+            'Raigad', 'Sindhudurg', 'Buldhana', 'Washim'
+        ]
+    };
 };
 
 export const registerUser = async (userData) => {
