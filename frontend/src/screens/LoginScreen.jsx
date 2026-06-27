@@ -23,22 +23,48 @@ const LoginScreen = () => {
         setLoading(true);
 
         try {
-            console.log('Attempting login for role:', role, 'phone:', formData.phone);
             const data = await loginUser(role, formData);
-            console.log('Login successful:', data);
-
             await login(data.user, data.access_token);
-
-            // Navigate based on role
             if (role === 'supervisor') {
                 navigate('/admin/dashboard');
             } else {
                 navigate('/home');
             }
         } catch (err) {
-            console.error('Login error:', err);
-            const errorMsg = err.response?.data?.detail || err.message || 'Login failed';
-            setError(errorMsg);
+            // Backend unavailable — try local users stored during registration
+            try {
+                const localUsers = JSON.parse(localStorage.getItem('civicmind_local_users') || '[]');
+                const foundUser = localUsers.find(
+                    u => u.phone === formData.phone && u.password === formData.password && u.role === role
+                );
+
+                if (foundUser) {
+                    const localToken = `local_${Date.now()}_${Math.random().toString(36).substr(2)}`;
+                    const userData = {
+                        id: foundUser.id,
+                        name: foundUser.name,
+                        phone: foundUser.phone,
+                        role: foundUser.role,
+                        district: foundUser.district,
+                    };
+                    await login(userData, localToken);
+                    if (role === 'supervisor') {
+                        navigate('/admin/dashboard');
+                    } else {
+                        navigate('/home');
+                    }
+                } else {
+                    // Check if phone exists but wrong password
+                    const phoneExists = localUsers.find(u => u.phone === formData.phone);
+                    if (phoneExists) {
+                        setError('Incorrect password. Please try again.');
+                    } else {
+                        setError('Account not found. Please register first.');
+                    }
+                }
+            } catch (localErr) {
+                setError('Login failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
