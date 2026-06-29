@@ -57,7 +57,7 @@ const DangerAlertScreen = () => {
                     AI Safety Scanning...
                 </h2>
                 <p className="text-slate-gray text-center max-w-xs font-medium text-sm">
-                    Processing context with YOLOv8 Vision & AI Hazard Analysis
+                    Processing context with Vision & AI Hazard Analysis
                 </p>
 
                 <div className="flex gap-2 mt-8">
@@ -99,7 +99,7 @@ const DangerAlertScreen = () => {
                         </div>
                         <div>
                             <h4 className="font-bold text-ink-navy text-sm">Vision Bounding Boxes</h4>
-                            <p className="text-xs text-slate-gray font-medium">YOLOv8 Visual Overlay</p>
+                            <p className="text-xs text-slate-gray font-medium">Visual Overlay</p>
                         </div>
                     </div>
                     
@@ -276,7 +276,7 @@ const DangerAlertScreen = () => {
                         </div>
                         
                         <p className="text-xs text-slate-gray mt-4 leading-relaxed font-medium">
-                            YOLOv8 Computer Vision model has processed the image, placing bounding box overlays over anomalous items like open manholes, lacking safety gear, or exposed hazard nodes.
+                            Computer Vision model has processed the image, placing bounding box overlays over anomalous items like open manholes, lacking safety gear, or exposed hazard nodes.
                         </p>
                     </div>
                 </div>

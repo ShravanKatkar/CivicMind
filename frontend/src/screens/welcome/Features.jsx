@@ -7,7 +7,7 @@ const Features = () => {
         {
             icon: <Eye className="w-6 h-6 text-electric-blue" />,
             title: "Computer Vision",
-            desc: "Leverages YOLOv8 and BLIP models to analyze safety hazards, missing PPE, and open manholes on-site instantly.",
+            desc: "Leverages computer vision and BLIP models to analyze safety hazards, missing PPE, and open manholes on-site instantly.",
             borderClass: "hover:border-electric-blue/30"
         },
         {

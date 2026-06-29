@@ -215,7 +215,7 @@ const Hero = () => {
                         </svg>
                     </div>
 
-                    {/* Floating YOLO AI Panels */}
+                    {/* Floating AI Panels */}
                     <motion.div 
                         animate={{ y: [0, -8, 0] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -225,7 +225,7 @@ const Hero = () => {
                             <ShieldAlert className="w-4.5 h-4.5 text-orange-500" />
                         </div>
                         <div className="min-w-0">
-                            <span className="text-[9px] font-bold text-slate-gray uppercase tracking-wider block">YOLO Risk Alert</span>
+                            <span className="text-[9px] font-bold text-slate-gray uppercase tracking-wider block">Risk Alert</span>
                             <span className="text-xs font-bold text-white truncate block">Open Manhole (94%)</span>
                         </div>
                     </motion.div>

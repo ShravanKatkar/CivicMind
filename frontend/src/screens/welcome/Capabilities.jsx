@@ -5,7 +5,7 @@ import { Target, Eye, Mic, BrainCircuit, FileSearch, LineChart } from 'lucide-re
 const Capabilities = () => {
     const list = [
         {
-            model: "YOLOv8",
+            model: "Vision AI",
             title: "Real-Time Object Detection",
             desc: "Identifies work hazards, workers, vehicles, open pits, and safety items with precise coordinates and confidence scores.",
             tech: "Computer Vision Model",

@@ -20,7 +20,7 @@ const Footer = () => {
                         </span>
                     </div>
                     <p className="text-xs leading-relaxed max-w-sm text-gray-400">
-                        Autonomous Safety Intelligence for frontline sanitation workers and public works departments. Built on YOLOv8 computer vision and structured LLM explanation layers.
+                        Autonomous Safety Intelligence for frontline sanitation workers and public works departments. Built on computer vision and structured LLM explanation layers.
                     </p>
                     
                     {/* Social links */}

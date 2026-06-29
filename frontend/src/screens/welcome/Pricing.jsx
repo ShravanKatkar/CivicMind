@@ -9,7 +9,7 @@ const Pricing = () => {
             title: "Safety Cloud",
             desc: "Multi-tenant public safety analytics hosted on secure servers with instant setup.",
             features: [
-                "YOLOv8 & BLIP Object Scan",
+                "Computer Vision & BLIP Object Scan",
                 "ChromaDB semantic search",
                 "SMS / Email alert warnings",
                 "Standard email support"

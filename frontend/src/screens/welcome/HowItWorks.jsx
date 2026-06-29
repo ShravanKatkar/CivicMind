@@ -13,7 +13,7 @@ const HowItWorks = () => {
         {
             icon: <Eye className="w-6 h-6 text-vivid-cyan" />,
             title: "AI Vision Analysis",
-            desc: "YOLOv8 detects helmets, vests, and manholes while BLIP constructs a full semantic scene analysis in milliseconds.",
+            desc: "Computer Vision detects helmets, vests, and manholes while BLIP constructs a full semantic scene analysis in milliseconds.",
             color: "border-l-vivid-cyan bg-vivid-cyan/5"
         },
         {

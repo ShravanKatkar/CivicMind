@@ -8,7 +8,7 @@ const FAQ = () => {
     const questionsList = [
         {
             q: "How does CivicMind AI prevent vision hallucinations?",
-            a: "We wrap our neural network models inside a two-layered safety wrapper. First, the Relevance Gatekeeper checks if the photo matches civil work contexts. Second, the Risk Engine validates YOLOv8 tags against hard-coded deterministic weights before calling the LLM explainer."
+            a: "We wrap our neural network models inside a two-layered safety wrapper. First, the Relevance Gatekeeper checks if the photo matches civil work contexts. Second, the Risk Engine validates visual tags against hard-coded deterministic weights before calling the LLM explainer."
         },
         {
             q: "What languages does the Voice Reporting system support?",
@@ -20,7 +20,7 @@ const FAQ = () => {
         },
         {
             q: "What hardware is required for On-Premise deployments?",
-            a: "For local municipal server installations, we recommend standard x86 servers equipped with at least one NVIDIA RTX series GPU (8GB+ VRAM) to support concurrent Whisper and YOLOv8 inference loops."
+            a: "For local municipal server installations, we recommend standard x86 servers equipped with at least one NVIDIA RTX series GPU (8GB+ VRAM) to support concurrent Whisper and vision inference loops."
         }
     ];
 
