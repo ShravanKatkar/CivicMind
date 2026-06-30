@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useAnimation } from 'framer-motion';
-import { ArrowRight, Play, ShieldAlert, Cpu, Landmark, Languages, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowRight, Play, Cpu, Landmark, Languages, Zap } from 'lucide-react';
 
 const Counter = ({ value, duration = 2, suffix = "" }) => {
     const [count, setCount] = useState(0);
@@ -68,11 +68,11 @@ const Hero = () => {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-transparent to-white pointer-events-none z-10" />
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
-            <div className="max-w-[1440px] mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-20">
-                {/* Left Column Content */}
-                <div className="lg:col-span-7 flex flex-col items-start gap-8">
+            <div className="max-w-[1440px] mx-auto px-6 md:px-12 w-full flex flex-col items-center relative z-20">
+                {/* Centered Content */}
+                <div className="max-w-4xl flex flex-col items-center text-center gap-8">
                     {/* Badge List */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 justify-center">
                         {badges.map((badge, idx) => (
                             <motion.div 
                                 initial={{ opacity: 0, scale: 0.9 }}
@@ -105,7 +105,7 @@ const Hero = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
-                        className="text-slate-gray text-base md:text-lg max-w-xl leading-relaxed font-medium"
+                        className="text-slate-gray text-base md:text-lg max-w-xl leading-relaxed font-medium mx-auto"
                     >
                         CivicMind AI is an advanced safety intelligence platform built strictly for public works and municipal sanitation. We combine real-time computer vision, context-aware risk scoring, and zero-hallucination guardrails to protect frontline workers and automate compliance.
                     </motion.p>
@@ -115,7 +115,7 @@ const Hero = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
-                        className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+                        className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center"
                     >
                         <button 
                             onClick={() => navigate('/language')}
@@ -139,7 +139,7 @@ const Hero = () => {
                     {/* Real-time stats widgets */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full pt-6 border-t border-gray-100 dark:border-slate-800">
                         {stats.map((stat, idx) => (
-                            <div key={idx} className="flex flex-col">
+                            <div key={idx} className="flex flex-col items-center text-center">
                                 <Counter value={stat.value} suffix={stat.suffix} />
                                 <span className="text-[11px] font-bold text-slate-gray uppercase tracking-widest mt-1">
                                     {stat.label}
@@ -148,102 +148,6 @@ const Hero = () => {
                         ))}
                     </div>
                 </div>
-
-                {/* Right Column Animated Simulation Artwork */}
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
-                    className="lg:col-span-5 relative w-full h-[380px] md:h-[480px] rounded-3xl bg-slate-900 overflow-hidden shadow-2xl border border-slate-800"
-                >
-                    {/* Glowing Bounding Box Scanning Feed Mockup */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,0,0,0.4)_0%,_rgba(0,0,0,0.8)_100%)] z-10" />
-                    
-                    {/* Glowing Neural Grid Lines overlaying */}
-                    <div className="absolute inset-0 bg-[linear-gradient(rgba(18,24,38,0.2)_1px,transparent_1px),linear-gradient(90deg,rgba(18,24,38,0.2)_1px,transparent_1px)] bg-[size:16px_16px] z-10 opacity-70" />
-                    
-                    {/* Simulated Camera Scanner line */}
-                    <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-vivid-cyan to-transparent animate-scan z-20" />
-                    
-                    {/* CCTV Details Overlays */}
-                    <div className="absolute top-4 left-4 z-20 flex flex-col font-mono text-[10px] text-vivid-cyan/80 gap-0.5">
-                        <span>CAMERA: CAM-EAST-04</span>
-                        <span>LAT: 19.0760° N | LON: 72.8777° E</span>
-                        <span className="text-alert-red font-bold animate-pulse flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-alert-red" />
-                            LIVE ASSESSMENT FEED
-                        </span>
-                    </div>
-
-                    {/* Animated Smart City elements */}
-                    <div className="absolute inset-0 flex items-center justify-center p-8 z-10">
-                        <svg className="w-full h-full text-slate-800" viewBox="0 0 200 200" fill="none">
-                            {/* Radar Waves */}
-                            <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-                            <circle cx="100" cy="100" r="50" stroke="currentColor" strokeWidth="1" />
-                            
-                            {/* Scanning cone */}
-                            <path d="M100 100 L60 40 A80 80 0 0 1 140 40 Z" fill="url(#scanGrad)" opacity="0.1" />
-                            
-                            {/* Node connections */}
-                            <g stroke="#2563EB" strokeWidth="1">
-                                <line x1="100" y1="100" x2="60" y2="70" />
-                                <line x1="100" y1="100" x2="140" y2="70" />
-                                <line x1="100" y1="100" x2="80" y2="150" />
-                                <line x1="100" y1="100" x2="130" y2="140" />
-                                <line x1="60" y1="70" x2="40" y2="110" />
-                                <line x1="140" y1="70" x2="160" y2="110" />
-                            </g>
-
-                            {/* Node Dots */}
-                            <circle cx="100" cy="100" r="4" fill="#2563EB" className="animate-ping" />
-                            <circle cx="100" cy="100" r="3" fill="#2563EB" />
-                            
-                            <circle cx="60" cy="70" r="3" fill="#06B6D4" />
-                            <circle cx="140" cy="70" r="3" fill="#06B6D4" />
-                            <circle cx="80" cy="150" r="3" fill="#10B981" />
-                            <circle cx="130" cy="140" r="3" fill="#10B981" />
-                            <circle cx="40" cy="110" r="3" fill="#F97316" />
-                            <circle cx="160" cy="110" r="3" fill="#F97316" />
-
-                            <defs>
-                                <linearGradient id="scanGrad" x1="100" y1="100" x2="100" y2="40">
-                                    <stop offset="0%" stopColor="#06B6D4" stopOpacity="0" />
-                                    <stop offset="100%" stopColor="#06B6D4" stopOpacity="1" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-
-                    {/* Floating AI Panels */}
-                    <motion.div 
-                        animate={{ y: [0, -8, 0] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute bottom-6 left-6 z-20 p-3 bg-slate-800/80 backdrop-blur-md rounded-2xl border border-slate-700/60 shadow-xl flex items-center gap-3 max-w-[220px]"
-                    >
-                        <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                            <ShieldAlert className="w-4.5 h-4.5 text-orange-500" />
-                        </div>
-                        <div className="min-w-0">
-                            <span className="text-[9px] font-bold text-slate-gray uppercase tracking-wider block">Risk Alert</span>
-                            <span className="text-xs font-bold text-white truncate block">Open Manhole (94%)</span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div 
-                        animate={{ y: [0, 8, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                        className="absolute top-16 right-6 z-20 p-3 bg-slate-800/80 backdrop-blur-md rounded-2xl border border-slate-700/60 shadow-xl flex items-center gap-3 max-w-[200px]"
-                    >
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                            <ShieldCheck className="w-4.5 h-4.5 text-emerald-500" />
-                        </div>
-                        <div className="min-w-0">
-                            <span className="text-[9px] font-bold text-slate-gray uppercase tracking-wider block">PPE Tracker</span>
-                            <span className="text-xs font-bold text-white truncate block">Helmet Secured (99%)</span>
-                        </div>
-                    </motion.div>
-                </motion.div>
             </div>
         </section>
     );
